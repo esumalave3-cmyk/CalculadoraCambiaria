@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Brecha Cambiaria · BCV vs Paralela</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bcv: #2563eb;      /* azul */
+    --par: #ea580c;      /* naranja */
+    --gap: #059669;      /* verde */
+    --loss: #dc2626;     /* rojo */
+    --warn: #ca8a04;     /* ámbar */
+  }
+  html, body { font-family: 'Inter', system-ui, sans-serif; }
+  .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  .card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem; /* rounded-2xl */
+    box-shadow: 0 1px 2px rgba(15,23,42,.04), 0 4px 16px rgba(15,23,42,.04);
+  }
+  .pill {
+    display: inline-flex; align-items: center; gap: .35rem;
+    padding: .25rem .6rem; border-radius: 9999px;
+    font-size: .72rem; font-weight: 600; letter-spacing: .02em;
+  }
+  .input-base {
+    width: 100%;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: .75rem;
+    padding: .75rem 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0f172a;
+    transition: all .15s ease;
+    outline: none;
+  }
+  .input-base:focus {
+    border-color: #6366f1;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(99,102,241,.12);
+  }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
+    padding: .55rem .9rem; border-radius: .65rem;
+    font-weight: 600; font-size: .82rem;
+    transition: all .15s ease; cursor: pointer;
+    border: 1px solid transparent;
+  }
+  .btn-primary { background: #0f172a; color: #fff; }
+  .btn-primary:hover { background: #1e293b; }
+  .btn-ghost { background: #fff; color: #334155; border-color: #e2e8f0; }
+  .btn-ghost:hover { background: #f1f5f9; }
+  .btn-swap {
+    width: 2.5rem; height: 2.5rem; border-radius: 9999px;
+    background: #eef2ff; color: #4338ca;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform .25s ease;
+  }
+  .btn-swap:hover { transform: rotate(180deg); background: #e0e7ff; }
+  .copy-btn {
+    background: transparent; color: #64748b;
+    padding: .25rem .45rem; border-radius: .4rem;
+    transition: all .15s ease;
+  }
+  .copy-btn:hover { background: #f1f5f9; color: #0f172a; }
+  .metric-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    letter-spacing: -.01em;
+  }
+  .formula-row {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .78rem;
+    color: #475569;
+    background: #f8fafc;
+    border: 1px dashed #e2e8f0;
+    border-radius: .5rem;
+    padding: .5rem .7rem;
+  }
+  .toast {
+    position: fixed; bottom: 1.5rem; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #0f172a; color: #fff;
+    padding: .7rem 1.1rem; border-radius: .7rem;
+    font-size: .85rem; font-weight: 500;
+    opacity: 0; pointer-events: none;
+    transition: all .25s ease;
+    z-index: 50;
+    box-shadow: 0 10px 30px rgba(15,23,42,.25);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .warn-banner {
+    background: #fef3c7; border: 1px solid #fde68a;
+    color: #92400e; padding: .6rem .9rem; border-radius: .65rem;
+    font-size: .82rem; font-weight: 500;
+  }
+  .negative { color: var(--loss); }
+  .positive { color: var(--gap); }
+  .neutral  { color: var(--warn); }
+  .section-title {
+    display: flex; align-items: center; gap: .5rem;
+    font-size: .72rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .08em;
+    color: #64748b;
+  }
+  .section-title .dot {
+    width: 6px; height: 6px; border-radius: 9999px; background: currentColor;
+  }
+  .divider { height: 1px; background: #e2e8f0; }
+  .chip-bcv { background: #dbeafe; color: #1e40af; }
+  .chip-par { background: #ffedd5; color: #9a3412; }
+  .chip-gap { background: #d1fae5; color: #065f46; }
+  .chip-loss{ background: #fee2e2; color: #991b1b; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+
+<div class="max-w-6xl mx-auto px-4 py-8 md:py-12">
+
+  <!-- HEADER -->
+  <header class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
+    <div>
+      <div class="flex items-center gap-2 mb-2">
+        <span class="pill bg-slate-900 text-white">Venezuela</span>
+        <span class="pill chip-bcv">BCV</span>
+        <span class="pill chip-par">Paralela</span>
+      </div>
+      <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900">
+        Analizador de <span class="text-indigo-600">Brecha Cambiaria</span>
+      </h1>
+      <p class="text-slate-500 text-sm md:text-base mt-1 max-w-2xl">
+        Calcula en tiempo real la diferencia entre la <b>Tasa Oficial BCV</b> y la <b>Tasa Paralela / Referencial</b>,
+        su impacto en montos, el arbitraje al pagar en bolívares y el factor de reposición.
+      </p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <label class="text-xs font-semibold text-slate-500 mr-1">Decimales</label>
+      <div class="inline-flex rounded-lg border border-slate-200 bg-white overflow-hidden">
+        <button data-dec="2" class="dec-btn px-3 py-1.5 text-sm font-semibold">2</button>
+        <button data-dec="3" class="dec-btn px-3 py-1.5 text-sm font-semibold">3</button>
+        <button data-dec="4" class="dec-btn px-3 py-1.5 text-sm font-semibold">4</button>
+      </div>
+      <button id="btnExample" class="btn btn-ghost" title="Cargar valores de ejemplo">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+        Ejemplo
+      </button>
+      <button id="btnClear" class="btn btn-ghost" title="Limpiar campos">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        Limpiar
+      </button>
+    </div>
+  </header>
+
+  <!-- ALERTA -->
+  <div id="warnBox" class="warn-banner mb-5 hidden"></div>
+
+  <!-- INPUTS -->
+  <section class="card p-5 md:p-6 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+      <div class="md:col-span-4">
+        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+          Tasa Oficial <span class="pill chip-bcv ml-1">BCV</span>
+        </label>
+        <div class="relative">
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 mono text-sm">Bs/USD</span>
+          <input id="inBCV" type="text" inputmode="decimal" placeholder="0.00" class="input-base pl-16" />
+        </div>
+      </div>
+
+      <div class="md:col-span-1 flex justify-center">
+        <button id="btnSwap" class="btn-swap" title="Intercambiar tasas">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10l-4 4 4 4"/><path d="M3 14h14"/><path d="M17 4l4 4-4 4"/><path d="M21 8H7"/></svg>
+        </button>
+      </div>
+
+      <div class="md:col-span-4">
+        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+          Tasa Paralela / Referencial <span class="pill chip-par ml-1">Paralela</span>
+        </label>
+        <div class="relative">
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 mono text-sm">Bs/USD</span>
+          <input id="inPAR" type="text" inputmode="decimal" placeholder="0.00" class="input-base pl-16" />
+        </div>
+      </div>
+
+      <div class="md:col-span-3">
+        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+          Monto de prueba (USD)
+        </label>
+        <div class="relative">
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 mono text-sm">USD</span>
+          <input id="inUSD" type="text" inputmode="decimal" placeholder="100" class="input-base pl-14" value="100" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GRID DE TARJETAS -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+    <!-- TARJETA 1: BRECHA -->
+    <article class="card p-5 md:p-6">
+      <div class="flex items-center justify-between mb-3">
+        <div class="section-title"><span class="dot"></span> Brecha Cambiaria</div>
+        <button class="copy-btn" data-copy="gap" title="Copiar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <div class="text-xs text-slate-500 font-medium mb-1">Brecha (%)</div>
+          <div id="gapPct" class="metric-value text-3xl md:text-4xl positive">—</div>
+          <div id="gapPctLabel" class="text-xs text-slate-500 mt-1">Paralelo vs BCV</div>
+        </div>
+        <div>
+          <div class="text-xs text-slate-500 font-medium mb-1">Brecha Absoluta</div>
+          <div id="gapAbs" class="metric-value text-2xl md:text-3xl text-slate-900">—</div>
+          <div class="text-xs text-slate-500 mt-1">Bs por cada dólar</div>
+        </div>
+      </div>
+
+      <div class="divider my-4"></div>
+      <div class="formula-row" id="fGap"></div>
+    </article>
+
+    <!-- TARJETA 2: IMPACTO EN MONTO -->
+    <article class="card p-5 md:p-6">
+      <div class="flex items-center justify-between mb-3">
+        <div class="section-title"><span class="dot"></span> Impacto en monto USD</div>
+        <button class="copy-btn" data-copy="impact" title="Copiar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div class="bg-blue-50 border border-blue-100 rounded-xl p-3">
+          <div class="text-[11px] uppercase font-semibold text-blue-700">A tasa BCV</div>
+          <div id="bsBCV" class="metric-value text-xl text-blue-900 mt-1">—</div>
+        </div>
+        <div class="bg-orange-50 border border-orange-100 rounded-xl p-3">
+          <div class="text-[11px] uppercase font-semibold text-orange-700">A tasa Paralela</div>
+          <div id="bsPAR" class="metric-value text-xl text-orange-900 mt-1">—</div>
+        </div>
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
+          <div class="text-[11px] uppercase font-semibold text-slate-600">Diferencia</div>
+          <div id="bsDiff" class="metric-value text-xl text-slate-900 mt-1">—</div>
+        </div>
+      </div>
+
+      <div class="divider my-4"></div>
+      <div class="formula-row" id="fImpact"></div>
+    </article>
+
+    <!-- TARJETA 3: AHORRO / ARBITRAJE -->
+    <article class="card p-5 md:p-6">
+      <div class="flex items-center justify-between mb-3">
+        <div class="section-title"><span class="dot"></span> Ahorro / Arbitraje al pagar en Bs</div>
+        <button class="copy-btn" data-copy="arb" title="Copiar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div>
+          <div class="text-xs text-slate-500 font-medium">Ahorro %</div>
+          <div id="arbPct" class="metric-value text-2xl text-emerald-600">—</div>
+          <div class="text-[11px] text-slate-500">(Par − BCV) / Par</div>
+        </div>
+        <div>
+          <div class="text-xs text-slate-500 font-medium">USD a tasa Paralela</div>
+          <div id="arbUsd" class="metric-value text-2xl text-slate-900">—</div>
+          <div class="text-[11px] text-slate-500">para cubrir factura a BCV</div>
+        </div>
+        <div>
+          <div class="text-xs text-slate-500 font-medium">Ahorro neto (USD)</div>
+          <div id="arbNet" class="metric-value text-2xl text-emerald-600">—</div>
+          <div class="text-[11px] text-slate-500">diferencia en dólares</div>
+        </div>
+      </div>
+
+      <div class="divider my-4"></div>
+      <div class="formula-row" id="fArb"></div>
+    </article>
+
+    <!-- TARJETA 4: FACTOR DE AJUSTE / REPOSICIÓN -->
+    <article class="card p-5 md:p-6">
+      <div class="flex items-center justify-between mb-3">
+        <div class="section-title"><span class="dot"></span> Factor de Ajuste / Reposición</div>
+        <button class="copy-btn" data-copy="adj" title="Copiar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <div class="text-xs text-slate-500 font-medium mb-1">Multiplicador (Par / BCV)</div>
+          <div id="adjFactor" class="metric-value text-3xl text-indigo-600">—</div>
+          <div class="text-[11px] text-slate-500">aplicar a precio cobrado a BCV</div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+            Precio cobrado a BCV (Bs)
+          </label>
+          <input id="inPrice" type="text" inputmode="decimal" placeholder="0.00" class="input-base" value="0" />
+        </div>
+      </div>
+
+      <div class="mt-4 bg-indigo-50 border border-indigo-100 rounded-xl p-3 flex items-center justify-between">
+        <div>
+          <div class="text-[11px] uppercase font-semibold text-indigo-700">Precio de reposición sugerido</div>
+          <div class="text-[11px] text-indigo-600">para proteger valor real al reponer a Paralelo</div>
+        </div>
+        <div id="adjPrice" class="metric-value text-xl text-indigo-900">—</div>
+      </div>
+
+      <div class="divider my-4"></div>
+      <div class="formula-row" id="fAdj"></div>
+    </article>
+
+    <!-- TARJETA 5: PROMEDIO Y SIMETRÍA -->
+    <article class="card p-5 md:p-6">
+      <div class="flex items-center justify-between mb-3">
+        <div class="section-title"><span class="dot"></span> Tasa Promedio y Desviación Simétrica</div>
+        <button class="copy-btn" data-copy="avg" title="Copiar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
+          <div class="text-[11px] uppercase font-semibold text-slate-600">Promedio</div>
+          <div id="avgRate" class="metric-value text-lg text-slate-900 mt-1">—</div>
+        </div>
+        <div class="bg-blue-50 border border-blue-100 rounded-xl p-3">
+          <div class="text-[11px] uppercase font-semibold text-blue-700">Desv. BCV</div>
+          <div id="devBCV" class="metric-value text-lg text-blue-900 mt-1">—</div>
+        </div>
+        <div class="bg-orange-50 border border-orange-100 rounded-xl p-3">
+          <div class="text-[11px] uppercase font-semibold text-orange-700">Desv. Paralela</div>
+          <div id="devPAR" class="metric-value text-lg text-orange-900 mt-1">—</div>
+        </div>
+        <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-3">
+          <div class="text-[11px] uppercase font-semibold text-emerald-700">Dif. Simétrica %</div>
+          <div id="symPct" class="metric-value text-lg text-emerald-900 mt-1">—</div>
+        </div>
+      </div>
+
+      <div class="divider my-4"></div>
+      <div class="formula-row" id="fAvg"></div>
+    </article>
+
+    <!-- TARJETA 6: AUDITORÍA -->
+    <article class="card p-5 md:p-6">
+      <div class="flex items-center justify-between mb-3">
+        <div class="section-title"><span class="dot"></span> Auditoría de Fórmulas</div>
+        <button class="copy-btn" data-copy="audit" title="Copiar todo">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+        </button>
+      </div>
+      <p class="text-xs text-slate-500 mb-3">
+        Valores actuales sustituidos en cada fórmula. Listo para llevar a Excel.
+      </p>
+      <div id="auditList" class="space-y-2 text-xs"></div>
+    </article>
+
+  </div>
+
+  <footer class="mt-8 text-center text-xs text-slate-400">
+    Herramienta de cálculo local · los valores no se envían a ningún servidor.
+  </footer>
+</div>
+
+<div id="toast" class="toast">Copiado al portapapeles</div>
+
+<script>
+(() => {
+  // ---------- ESTADO ----------
+  const state = {
+    bcv: 0,
+    par: 0,
+    usd: 100,
+    price: 0,
+    dec: 4
+  };
+
+  // ---------- ELEMENTOS ----------
+  const $ = (id) => document.getElementById(id);
+  const inBCV = $('inBCV'), inPAR = $('inPAR'), inUSD = $('inUSD'), inPrice = $('inPrice');
+  const warnBox = $('warnBox');
+  const toast = $('toast');
+
+  // ---------- UTILIDADES ----------
+  const parseNum = (v) => {
+    if (v == null) return NaN;
+    const s = String(v).trim().replace(',', '.');
+    if (s === '') return NaN;
+    const n = Number(s);
+    return Number.isFinite(n) ? n : NaN;
+  };
+  const fmt = (n, d = state.dec) => {
+    if (!Number.isFinite(n)) return '—';
+    return n.toLocaleString('es-VE', {
+      minimumFractionDigits: d,
+      maximumFractionDigits: d
+    });
+  };
+  const fmtPct = (n, d = 2) => {
+    if (!Number.isFinite(n)) return '—';
+    const sign = n > 0 ? '+' : (n < 0 ? '' : '');
+    return `${sign}${n.toLocaleString('es-VE',{minimumFractionDigits:d, maximumFractionDigits:d})}%`;
+  };
+  const signClass = (n) => (n > 0 ? 'positive' : (n < 0 ? 'negative' : 'neutral'));
+
+  function showToast(msg = 'Copiado al portapapeles') {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => toast.classList.remove('show'), 1600);
+  }
+
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast();
+    } catch {
+      // fallback
+      const ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta);
+      ta.select(); document.execCommand('copy'); ta.remove();
+      showToast();
+    }
+  }
+
+  // ---------- VALIDACIÓN ----------
+  function validate() {
+    const errors = [];
+    if (!Number.isFinite(state.bcv) || state.bcv <= 0) errors.push('Tasa BCV debe ser mayor que 0.');
+    if (!Number.isFinite(state.par) || state.par <= 0) errors.push('Tasa Paralela debe ser mayor que 0.');
+    if (!Number.isFinite(state.usd) || state.usd < 0) errors.push('Monto USD no válido.');
+    if (!Number.isFinite(state.price) || state.price < 0) errors.push('Precio de reposición no válido.');
+
+    if (errors.length) {
+      warnBox.textContent = '⚠️ ' + errors.join(' ');
+      warnBox.classList.remove('hidden');
+      return false;
+    }
+    warnBox.classList.add('hidden');
+    return true;
+  }
+
+  // ---------- CÁLCULO ----------
+  function compute() {
+    const bcv = state.bcv, par = state.par, usd = state.usd, price = state.price;
+    const d = state.dec;
+
+    // 1) Brecha
+    const gapAbs = par - bcv;
+    const gapPct = (bcv !== 0) ? (gapAbs / bcv) * 100 : NaN;
+
+    // 2) Impacto en monto
+    const bsBCV = usd * bcv;
+    const bsPAR = usd * par;
+    const bsDiff = bsPAR - bsBCV;
+
+    // 3) Arbitraje
+    const arbPct = (par !== 0) ? ((par - bcv) / par) * 100 : NaN;
+    const arbUsd = (par !== 0) ? bsBCV / par : NaN; // USD necesarios a tasa paralela para cubrir factura en Bs a BCV
+    const arbNet = usd - arbUsd;
+
+    // 4) Factor de ajuste
+    const adjFactor = (bcv !== 0) ? par / bcv : NaN;
+    const adjPrice = price * adjFactor;
+
+    // 5) Promedio y simetría
+    const avg = (bcv + par) / 2;
+    const devBCV = (avg !== 0) ? ((bcv - avg) / avg) * 100 : NaN;
+    const devPAR = (avg !== 0) ? ((par - avg) / avg) * 100 : NaN;
+    const symPct = (avg !== 0) ? (Math.abs(par - bcv) / avg) * 100 : NaN;
+
+    return { gapAbs, gapPct, bsBCV, bsPAR, bsDiff, arbPct, arbUsd, arbNet, adjFactor, adjPrice, avg, devBCV, devPAR, symPct };
+  }
+
+  // ---------- RENDER ----------
+  function render() {
+    const ok = validate();
+    if (!ok) {
+      // resetear métricas
+      ['gapPct','gapAbs','bsBCV','bsPAR','bsDiff','arbPct','arbUsd','arbNet','adjFactor','adjPrice','avgRate','devBCV','devPAR','symPct']
+        .forEach(id => $(id).textContent = '—');
+      ['fGap','fImpact','fArb','fAdj','fAvg'].forEach(id => $(id).textContent = '');
+      $('auditList').innerHTML = '';
+      return;
+    }
+
+    const r = compute();
+    const d = state.dec;
+
+    // Tarjeta 1
+    const gapEl = $('gapPct');
+    gapEl.textContent = fmtPct(r.gapPct, 2);
+    gapEl.className = `metric-value text-3xl md:text-4xl ${signClass(r.gapPct)}`;
+    $('gapPctLabel').textContent =
+      r.gapPct > 0 ? 'El paralelo supera al BCV' :
+      r.gapPct < 0 ? 'El BCV supera al paralelo' : 'Sin brecha';
+
+    const gapAbsEl = $('gapAbs');
+    gapAbsEl.textContent = `${fmt(r.gapAbs)} Bs`;
+    gapAbsEl.className = `metric-value text-2xl md:text-3xl ${signClass(r.gapAbs)}`;
+
+    $('fGap').innerHTML =
+      `Brecha % = ((Par − BCV) / BCV) × 100 = ((${fmt(r.gapAbs)} / ${fmt(state.bcv)}) × 100) = <b>${fmtPct(r.gapPct,2)}</b><br>` +
+      `Brecha Abs = Par − BCV = ${fmt(state.par)} − ${fmt(state.bcv)} = <b>${fmt(r.gapAbs)} Bs/$</b>`;
+
+    // Tarjeta 2
+    $('bsBCV').textContent = `${fmt(r.bsBCV)} Bs`;
+    $('bsPAR').textContent = `${fmt(r.bsPAR)} Bs`;
+    const bsDiffEl = $('bsDiff');
+    bsDiffEl.textContent = `${fmt(r.bsDiff)} Bs`;
+    bsDiffEl.className = `metric-value text-xl mt-1 ${signClass(r.bsDiff)}`;
+
+    $('fImpact').innerHTML =
+      `BCV: ${fmt(state.usd,2)} × ${fmt(state.bcv)} = <b>${fmt(r.bsBCV)} Bs</b><br>` +
+      `Par: ${fmt(state.usd,2)} × ${fmt(state.par)} = <b>${fmt(r.bsPAR)} Bs</b><br>` +
+      `Δ = ${fmt(r.bsPAR)} − ${fmt(r.bsBCV)} = <b>${fmt(r.bsDiff)} Bs</b>`;
+
+    // Tarjeta 3
+    const arbPctEl = $('arbPct');
+    arbPctEl.textContent = fmtPct(r.arbPct, 2);
+    $('arbUsd').textContent = `${fmt(r.arbUsd)} USD`;
+    const arbNetEl = $('arbNet');
+    arbNetEl.textContent = `${fmt(r.arbNet)} USD`;
+    arbNetEl.className = `metric-value text-2xl ${signClass(r.arbNet)}`;
+
+    $('fArb').innerHTML =
+      `Ahorro % = ((Par − BCV) / Par) × 100 = ((${fmt(state.par)} − ${fmt(state.bcv)}) / ${fmt(state.par)}) × 100 = <b>${fmtPct(r.arbPct,2)}</b><br>` +
+      `USD necesarios a Par para cubrir ${fmt(r.bsBCV)} Bs = ${fmt(r.bsBCV)} / ${fmt(state.par)} = <b>${fmt(r.arbUsd)} USD</b><br>` +
+      `Ahorro neto = ${fmt(state.usd,2)} − ${fmt(r.arbUsd)} = <b>${fmt(r.arbNet)} USD</b>`;
+
+    // Tarjeta 4
+    $('adjFactor').textContent = `×${fmt(r.adjFactor, 4)}`;
+    $('adjPrice').textContent = `${fmt(r.adjPrice)} Bs`;
+    $('fAdj').innerHTML =
+      `Factor = Par / BCV = ${fmt(state.par)} / ${fmt(state.bcv)} = <b>×${fmt(r.adjFactor,4)}</b><br>` +
+      `Precio reposición = ${fmt(state.price)} × ${fmt(r.adjFactor,4)} = <b>${fmt(r.adjPrice)} Bs</b>`;
+
+    // Tarjeta 5
+    $('avgRate').textContent = `${fmt(r.avg)} Bs/$`;
+    $('devBCV').textContent = fmtPct(r.devBCV, 2);
+    $('devPAR').textContent = fmtPct(r.devPAR, 2);
+    $('symPct').textContent = fmtPct(r.symPct, 2);
+
+    $('fAvg').innerHTML =
+      `Promedio = (${fmt(state.bcv)} + ${fmt(state.par)}) / 2 = <b>${fmt(r.avg)} Bs/$</b><br>` +
+      `Desv. BCV = (${fmt(state.bcv)} − ${fmt(r.avg)}) / ${fmt(r.avg)} = <b>${fmtPct(r.devBCV,2)}</b><br>` +
+      `Desv. Par = (${fmt(state.par)} − ${fmt(r.avg)}) / ${fmt(r.avg)} = <b>${fmtPct(r.devPAR,2)}</b><br>` +
+      `Dif. simétrica = |${fmt(state.par)} − ${fmt(state.bcv)}| / ${fmt(r.avg)} = <b>${fmtPct(r.symPct,2)}</b>`;
+
+    // Tarjeta 6: Auditoría
+    const rows = [
+      ['Brecha %', `((${fmt(state.par)} − ${fmt(state.bcv)}) / ${fmt(state.bcv)}) × 100 = ${fmtPct(r.gapPct,2)}`],
+      ['Brecha Abs', `${fmt(state.par)} − ${fmt(state.bcv)} = ${fmt(r.gapAbs)} Bs/$`],
+      ['Bs a BCV', `${fmt(state.usd,2)} × ${fmt(state.bcv)} = ${fmt(r.bsBCV)} Bs`],
+      ['Bs a Par', `${fmt(state.usd,2)} × ${fmt(state.par)} = ${fmt(r.bsPAR)} Bs`],
+      ['Diferencia Bs', `${fmt(r.bsPAR)} − ${fmt(r.bsBCV)} = ${fmt(r.bsDiff)} Bs`],
+      ['Ahorro %', `((${fmt(state.par)} − ${fmt(state.bcv)}) / ${fmt(state.par)}) × 100 = ${fmtPct(r.arbPct,2)}`],
+      ['USD a Par (cubrir)', `${fmt(r.bsBCV)} / ${fmt(state.par)} = ${fmt(r.arbUsd)} USD`],
+      ['Ahorro USD', `${fmt(state.usd,2)} − ${fmt(r.arbUsd)} = ${fmt(r.arbNet)} USD`],
+      ['Factor ajuste', `${fmt(state.par)} / ${fmt(state.bcv)} = ×${fmt(r.adjFactor,4)}`],
+      ['Precio reposición', `${fmt(state.price)} × ${fmt(r.adjFactor,4)} = ${fmt(r.adjPrice)} Bs`],
+      ['Promedio', `(${fmt(state.bcv)} + ${fmt(state.par)}) / 2 = ${fmt(r.avg)} Bs/$`],
+      ['Desv. BCV', `(${fmt(state.bcv)} − ${fmt(r.avg)}) / ${fmt(r.avg)} = ${fmtPct(r.devBCV,2)}`],
+      ['Desv. Par', `(${fmt(state.par)} − ${fmt(r.avg)}) / ${fmt(r.avg)} = ${fmtPct(r.devPAR,2)}`],
+      ['Dif. simétrica', `|${fmt(state.par)} − ${fmt(state.bcv)}| / ${fmt(r.avg)} = ${fmtPct(r.symPct,2)}`],
+    ];
+    $('auditList').innerHTML = rows.map(([k,v]) =>
+      `<div class="flex items-start gap-2"><span class="pill bg-slate-100 text-slate-700 shrink-0">${k}</span><span class="mono text-slate-600 break-all">${v}</span></div>`
+    ).join('');
+  }
+
+  // ---------- EVENTOS ----------
+  function syncInputs() {
+    state.bcv = parseNum(inBCV.value);
+    state.par = parseNum(inPAR.value);
+    state.usd = parseNum(inUSD.value);
+    state.price = parseNum(inPrice.value);
+    render();
+  }
+
+  [inBCV, inPAR, inUSD, inPrice].forEach(el => {
+    el.addEventListener('input', syncInputs);
+  });
+
+  $('btnSwap').addEventListener('click', () => {
+    const a = inBCV.value, b = inPAR.value;
+    inBCV.value = b; inPAR.value = a;
+    syncInputs();
+  });
+
+  $('btnExample').addEventListener('click', () => {
+    inBCV.value = '36.50';
+    inPAR.value = '47.80';
+    inUSD.value = '100';
+    inPrice.value = '1000';
+    syncInputs();
+    showToast('Valores de ejemplo cargados');
+  });
+
+  $('btnClear').addEventListener('click', () => {
+    inBCV.value = ''; inPAR.value = ''; inUSD.value = ''; inPrice.value = '0';
+    syncInputs();
+    showToast('Campos limpiados');
+  });
+
+  // Decimales
+  document.querySelectorAll('.dec-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.dec = Number(btn.dataset.dec);
+      document.querySelectorAll('.dec-btn').forEach(b => {
+        b.classList.toggle('bg-slate-900', b === btn);
+        b.classList.toggle('text-white', b === btn);
+        b.classList.toggle('text-slate-600', b !== btn);
+      });
+      render();
+    });
+  });
+  // estado inicial del selector
+  document.querySelector('.dec-btn[data-dec="4"]').click();
+
+  // Copiar
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.copy;
+      if (!validate()) { showToast('Completa las tasas primero'); return; }
+      const r = compute();
+      let text = '';
+      switch (key) {
+        case 'gap':
+          text = `Brecha Cambiaria: ${fmtPct(r.gapPct,2)} | Brecha Abs: ${fmt(r.gapAbs)} Bs/$`;
+          break;
+        case 'impact':
+          text = `Impacto USD ${fmt(state.usd,2)}: BCV=${fmt(r.bsBCV)} Bs | Par=${fmt(r.bsPAR)} Bs | Δ=${fmt(r.bsDiff)} Bs`;
+          break;
+        case 'arb':
+          text = `Arbitraje: Ahorro=${fmtPct(r.arbPct,2)} | USD a Par=${fmt(r.arbUsd)} | Ahorro neto=${fmt(r.arbNet)} USD`;
+          break;
+        case 'adj':
+          text = `Factor ajuste=×${fmt(r.adjFactor,4)} | Precio reposición=${fmt(r.adjPrice)} Bs`;
+          break;
+        case 'avg':
+          text = `Promedio=${fmt(r.avg)} Bs/$ | Desv.BCV=${fmtPct(r.devBCV,2)} | Desv.Par=${fmtPct(r.devPAR,2)} | Dif.sim=${fmtPct(r.symPct,2)}`;
+          break;
+        case 'audit':
+          text = Array.from($('auditList').children).map(li => li.innerText).join('\n');
+          break;
+      }
+      copyText(text);
+    });
+  });
+
+  // Inicial
+  inBCV.value = '36.50';
+  inPAR.value = '47.80';
+  syncInputs();
+})();
+</script>
+</body>
+</html>
