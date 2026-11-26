@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#0f172a" />
+<link rel="manifest" href="manifest.json" />
 <title>Brecha Cambiaria · BCV vs Paralela</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,7 +23,7 @@
   .card {
     background: #ffffff;
     border: 1px solid #e2e8f0;
-    border-radius: 1rem; /* rounded-2xl */
+    border-radius: 1rem;
     box-shadow: 0 1px 2px rgba(15,23,42,.04), 0 4px 16px rgba(15,23,42,.04);
   }
   .pill {
@@ -138,7 +140,7 @@
       </h1>
       <p class="text-slate-500 text-sm md:text-base mt-1 max-w-2xl">
         Calcula en tiempo real la diferencia entre la <b>Tasa Oficial BCV</b> y la <b>Tasa Paralela / Referencial</b>,
-        su impacto en montos, el arbitraje al pagar en bolívares y el factor de reposición.
+        el precio óptimo en divisa física, la brecha implícita entre dos precios y el factor de reposición.
       </p>
     </div>
     <div class="flex flex-wrap items-center gap-2">
@@ -162,7 +164,7 @@
   <!-- ALERTA -->
   <div id="warnBox" class="warn-banner mb-5 hidden"></div>
 
-  <!-- INPUTS -->
+  <!-- INPUTS PRINCIPALES -->
   <section class="card p-5 md:p-6 mb-6">
     <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
       <div class="md:col-span-4">
@@ -171,7 +173,7 @@
         </label>
         <div class="relative">
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 mono text-sm">Bs/USD</span>
-          <input id="inBCV" type="text" inputmode="decimal" placeholder="0.00" class="input-base pl-16" />
+          <input id="inBCV" type="text" inputmode="decimal" placeholder="920.00" class="input-base pl-16" />
         </div>
       </div>
 
@@ -187,7 +189,7 @@
         </label>
         <div class="relative">
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 mono text-sm">Bs/USD</span>
-          <input id="inPAR" type="text" inputmode="decimal" placeholder="0.00" class="input-base pl-16" />
+          <input id="inPAR" type="text" inputmode="decimal" placeholder="1150.00" class="input-base pl-16" />
         </div>
       </div>
 
@@ -232,7 +234,103 @@
       <div class="formula-row" id="fGap"></div>
     </article>
 
-    <!-- TARJETA 2: IMPACTO EN MONTO -->
+    <!-- TARJETA 2: PRECIO SUGERIDO EN DIVISA FÍSICA (PAGO BCV -> VENTA USD) -->
+    <article class="card p-5 md:p-6 border-emerald-200">
+      <div class="flex items-center justify-between mb-3">
+        <div class="section-title text-emerald-700"><span class="dot"></span> Precio Sugerido en Divisa Física</div>
+        <button class="copy-btn" data-copy="fxprice" title="Copiar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+        </button>
+      </div>
+      <p class="text-xs text-slate-500 mb-3">
+        Pagas el costo en Bs. a tasa <b>BCV</b> y recibes <b>USD físico</b> para cambiarlo en el mercado <b>Paralelo</b>.
+      </p>
+
+      <div class="grid grid-cols-3 gap-2.5 mb-4">
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Costo BCV ($)</label>
+          <input id="inCostUsd" type="text" inputmode="decimal" value="8.50" class="input-base !py-2 !px-3 text-sm" />
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Margen (%)</label>
+          <input id="inMarginPct" type="text" inputmode="decimal" value="5" class="input-base !py-2 !px-3 text-sm" />
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Colchón (%)</label>
+          <input id="inBufferPct" type="text" inputmode="decimal" value="3" class="input-base !py-2 !px-3 text-sm" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
+          <div class="text-[11px] uppercase font-semibold text-slate-600">Equilibrio USD</div>
+          <div id="fxEqUsd" class="metric-value text-xl text-slate-900 mt-1">—</div>
+          <div id="fxOutBs" class="text-[11px] text-slate-500 mt-0.5">Salida: — Bs</div>
+        </div>
+        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3">
+          <div class="text-[11px] uppercase font-semibold text-emerald-700">Sugerido USD</div>
+          <div id="fxSugUsd" class="metric-value text-xl text-emerald-700 mt-1">—</div>
+          <div id="fxInBs" class="text-[11px] text-emerald-700 mt-0.5">Ingreso: — Bs</div>
+        </div>
+        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-3">
+          <div class="text-[11px] uppercase font-semibold text-indigo-700">Utilidad Neta</div>
+          <div id="fxProfitUsd" class="metric-value text-xl text-indigo-900 mt-1">—</div>
+          <div id="fxProfitBs" class="text-[11px] text-indigo-700 mt-0.5">— Bs</div>
+        </div>
+      </div>
+
+      <div class="divider my-4"></div>
+      <div class="formula-row" id="fFxPrice"></div>
+    </article>
+
+    <!-- TARJETA 3: BRECHA IMPLÍCITA ENTRE DOS PRECIOS ($ DIVISA VS $ REF. BCV) -->
+    <article class="card p-5 md:p-6">
+      <div class="flex items-center justify-between mb-3">
+        <div class="section-title text-indigo-600"><span class="dot"></span> Brecha Implícita (Dos Precios)</div>
+        <button class="copy-btn" data-copy="imp" title="Copiar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+        </button>
+      </div>
+      <p class="text-xs text-slate-500 mb-3">
+        Compara cuando te ofrecen un precio en <b>divisa física ($)</b> y otro más alto para pagar en Bs. a tasa <b>BCV ($)</b>.
+      </p>
+
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Precio en Divisa ($)</label>
+          <input id="inPriceCash" type="text" inputmode="decimal" value="22" class="input-base !py-2 !px-3 text-sm" />
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Precio a BCV ($)</label>
+          <input id="inPriceBcvRef" type="text" inputmode="decimal" value="27" class="input-base !py-2 !px-3 text-sm" />
+        </div>
+      </div>
+
+      <!-- Veredicto automático -->
+      <div id="impVerdict" class="rounded-xl p-3 mb-3 border text-xs font-semibold">
+        Calculando recomendación...
+      </div>
+
+      <div class="grid grid-cols-3 gap-2.5">
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5">
+          <div class="text-[10px] uppercase font-semibold text-slate-500">Brecha Implícita</div>
+          <div id="impGapPct" class="metric-value text-lg text-slate-900 mt-0.5">—</div>
+        </div>
+        <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-2.5">
+          <div class="text-[10px] uppercase font-semibold text-emerald-700">Ahorro Efectivo</div>
+          <div id="impSavePct" class="metric-value text-lg text-emerald-700 mt-0.5">—</div>
+        </div>
+        <div class="bg-orange-50 border border-orange-100 rounded-xl p-2.5">
+          <div class="text-[10px] uppercase font-semibold text-orange-700">Tasa Implícita</div>
+          <div id="impParRate" class="metric-value text-base text-orange-900 mt-0.5">—</div>
+        </div>
+      </div>
+
+      <div class="divider my-4"></div>
+      <div class="formula-row" id="fImp"></div>
+    </article>
+
+    <!-- TARJETA 4: IMPACTO EN MONTO -->
     <article class="card p-5 md:p-6">
       <div class="flex items-center justify-between mb-3">
         <div class="section-title"><span class="dot"></span> Impacto en monto USD</div>
@@ -260,7 +358,7 @@
       <div class="formula-row" id="fImpact"></div>
     </article>
 
-    <!-- TARJETA 3: AHORRO / ARBITRAJE -->
+    <!-- TARJETA 5: AHORRO / ARBITRAJE -->
     <article class="card p-5 md:p-6">
       <div class="flex items-center justify-between mb-3">
         <div class="section-title"><span class="dot"></span> Ahorro / Arbitraje al pagar en Bs</div>
@@ -291,7 +389,7 @@
       <div class="formula-row" id="fArb"></div>
     </article>
 
-    <!-- TARJETA 4: FACTOR DE AJUSTE / REPOSICIÓN -->
+    <!-- TARJETA 6: FACTOR DE AJUSTE / REPOSICIÓN -->
     <article class="card p-5 md:p-6">
       <div class="flex items-center justify-between mb-3">
         <div class="section-title"><span class="dot"></span> Factor de Ajuste / Reposición</div>
@@ -326,7 +424,7 @@
       <div class="formula-row" id="fAdj"></div>
     </article>
 
-    <!-- TARJETA 5: PROMEDIO Y SIMETRÍA -->
+    <!-- TARJETA 7: PROMEDIO Y SIMETRÍA -->
     <article class="card p-5 md:p-6">
       <div class="flex items-center justify-between mb-3">
         <div class="section-title"><span class="dot"></span> Tasa Promedio y Desviación Simétrica</div>
@@ -358,7 +456,7 @@
       <div class="formula-row" id="fAvg"></div>
     </article>
 
-    <!-- TARJETA 6: AUDITORÍA -->
+    <!-- TARJETA 8: AUDITORÍA -->
     <article class="card p-5 md:p-6">
       <div class="flex items-center justify-between mb-3">
         <div class="section-title"><span class="dot"></span> Auditoría de Fórmulas</div>
@@ -385,16 +483,23 @@
 (() => {
   // ---------- ESTADO ----------
   const state = {
-    bcv: 0,
-    par: 0,
+    bcv: 920,
+    par: 1150,
     usd: 100,
     price: 0,
-    dec: 4
+    costUsd: 8.5,
+    marginPct: 5,
+    bufferPct: 3,
+    priceCash: 22,
+    priceBcvRef: 27,
+    dec: 2
   };
 
   // ---------- ELEMENTOS ----------
   const $ = (id) => document.getElementById(id);
   const inBCV = $('inBCV'), inPAR = $('inPAR'), inUSD = $('inUSD'), inPrice = $('inPrice');
+  const inCostUsd = $('inCostUsd'), inMarginPct = $('inMarginPct'), inBufferPct = $('inBufferPct');
+  const inPriceCash = $('inPriceCash'), inPriceBcvRef = $('inPriceBcvRef');
   const warnBox = $('warnBox');
   const toast = $('toast');
 
@@ -415,7 +520,7 @@
   };
   const fmtPct = (n, d = 2) => {
     if (!Number.isFinite(n)) return '—';
-    const sign = n > 0 ? '+' : (n < 0 ? '' : '');
+    const sign = n > 0 ? '+' : '';
     return `${sign}${n.toLocaleString('es-VE',{minimumFractionDigits:d, maximumFractionDigits:d})}%`;
   };
   const signClass = (n) => (n > 0 ? 'positive' : (n < 0 ? 'negative' : 'neutral'));
@@ -432,7 +537,6 @@
       await navigator.clipboard.writeText(text);
       showToast();
     } catch {
-      // fallback
       const ta = document.createElement('textarea');
       ta.value = text; document.body.appendChild(ta);
       ta.select(); document.execCommand('copy'); ta.remove();
@@ -459,52 +563,78 @@
 
   // ---------- CÁLCULO ----------
   function compute() {
-    const bcv = state.bcv, par = state.par, usd = state.usd, price = state.price;
-    const d = state.dec;
+    const { bcv, par, usd, price, costUsd, marginPct, bufferPct, priceCash, priceBcvRef } = state;
 
     // 1) Brecha
     const gapAbs = par - bcv;
     const gapPct = (bcv !== 0) ? (gapAbs / bcv) * 100 : NaN;
 
-    // 2) Impacto en monto
+    // 2) Precio sugerido en divisa física (costo pagado a BCV -> venta en USD cambiada en Paralelo)
+    const cUsd = Number.isFinite(costUsd) && costUsd >= 0 ? costUsd : 0;
+    const mFrac = (Number.isFinite(marginPct) ? marginPct : 0) / 100;
+    const bFrac = (Number.isFinite(bufferPct) ? bufferPct : 0) / 100;
+    const fxOutBs = cUsd * bcv;
+    const fxEqUsd = (par !== 0) ? fxOutBs / par : NaN;
+    const fxSugUsd = fxEqUsd * (1 + mFrac) * (1 + bFrac);
+    const fxInBs = fxSugUsd * par;
+    const fxProfitBs = fxInBs - fxOutBs;
+    const fxProfitUsd = (par !== 0) ? fxProfitBs / par : NaN;
+
+    // 3) Brecha implícita entre dos precios ($ divisa vs $ ref BCV)
+    const pCash = Number.isFinite(priceCash) && priceCash > 0 ? priceCash : NaN;
+    const pBcv = Number.isFinite(priceBcvRef) && priceBcvRef > 0 ? priceBcvRef : NaN;
+    const impGapPct = (Number.isFinite(pCash) && Number.isFinite(pBcv)) ? ((pBcv - pCash) / pCash) * 100 : NaN;
+    const impSavePct = (Number.isFinite(pCash) && Number.isFinite(pBcv)) ? ((pBcv - pCash) / pBcv) * 100 : NaN;
+    const impBcvTotalBs = Number.isFinite(pBcv) ? pBcv * bcv : NaN;
+    const impParRate = (Number.isFinite(impBcvTotalBs) && Number.isFinite(pCash)) ? impBcvTotalBs / pCash : NaN;
+    const impUsdNeededAtRealPar = (Number.isFinite(impBcvTotalBs) && par > 0) ? impBcvTotalBs / par : NaN;
+
+    // 4) Impacto en monto
     const bsBCV = usd * bcv;
     const bsPAR = usd * par;
     const bsDiff = bsPAR - bsBCV;
 
-    // 3) Arbitraje
+    // 5) Arbitraje
     const arbPct = (par !== 0) ? ((par - bcv) / par) * 100 : NaN;
-    const arbUsd = (par !== 0) ? bsBCV / par : NaN; // USD necesarios a tasa paralela para cubrir factura en Bs a BCV
+    const arbUsd = (par !== 0) ? bsBCV / par : NaN;
     const arbNet = usd - arbUsd;
 
-    // 4) Factor de ajuste
+    // 6) Factor de ajuste
     const adjFactor = (bcv !== 0) ? par / bcv : NaN;
     const adjPrice = price * adjFactor;
 
-    // 5) Promedio y simetría
+    // 7) Promedio y simetría
     const avg = (bcv + par) / 2;
     const devBCV = (avg !== 0) ? ((bcv - avg) / avg) * 100 : NaN;
     const devPAR = (avg !== 0) ? ((par - avg) / avg) * 100 : NaN;
     const symPct = (avg !== 0) ? (Math.abs(par - bcv) / avg) * 100 : NaN;
 
-    return { gapAbs, gapPct, bsBCV, bsPAR, bsDiff, arbPct, arbUsd, arbNet, adjFactor, adjPrice, avg, devBCV, devPAR, symPct };
+    return {
+      gapAbs, gapPct,
+      cUsd, fxOutBs, fxEqUsd, fxSugUsd, fxInBs, fxProfitBs, fxProfitUsd,
+      pCash, pBcv, impGapPct, impSavePct, impBcvTotalBs, impParRate, impUsdNeededAtRealPar,
+      bsBCV, bsPAR, bsDiff,
+      arbPct, arbUsd, arbNet,
+      adjFactor, adjPrice,
+      avg, devBCV, devPAR, symPct
+    };
   }
 
   // ---------- RENDER ----------
   function render() {
     const ok = validate();
     if (!ok) {
-      // resetear métricas
-      ['gapPct','gapAbs','bsBCV','bsPAR','bsDiff','arbPct','arbUsd','arbNet','adjFactor','adjPrice','avgRate','devBCV','devPAR','symPct']
+      ['gapPct','gapAbs','fxEqUsd','fxSugUsd','fxProfitUsd','impGapPct','impSavePct','impParRate',
+       'bsBCV','bsPAR','bsDiff','arbPct','arbUsd','arbNet','adjFactor','adjPrice','avgRate','devBCV','devPAR','symPct']
         .forEach(id => $(id).textContent = '—');
-      ['fGap','fImpact','fArb','fAdj','fAvg'].forEach(id => $(id).textContent = '');
+      ['fGap','fFxPrice','fImp','fImpact','fArb','fAdj','fAvg'].forEach(id => $(id).textContent = '');
       $('auditList').innerHTML = '';
       return;
     }
 
     const r = compute();
-    const d = state.dec;
 
-    // Tarjeta 1
+    // Tarjeta 1: Brecha
     const gapEl = $('gapPct');
     gapEl.textContent = fmtPct(r.gapPct, 2);
     gapEl.className = `metric-value text-3xl md:text-4xl ${signClass(r.gapPct)}`;
@@ -517,10 +647,50 @@
     gapAbsEl.className = `metric-value text-2xl md:text-3xl ${signClass(r.gapAbs)}`;
 
     $('fGap').innerHTML =
-      `Brecha % = ((Par − BCV) / BCV) × 100 = ((${fmt(r.gapAbs)} / ${fmt(state.bcv)}) × 100) = <b>${fmtPct(r.gapPct,2)}</b><br>` +
-      `Brecha Abs = Par − BCV = ${fmt(state.par)} − ${fmt(state.bcv)} = <b>${fmt(r.gapAbs)} Bs/$</b>`;
+      `Brecha % = ((${fmt(state.par)} − ${fmt(state.bcv)}) / ${fmt(state.bcv)}) × 100 = <b>${fmtPct(r.gapPct,2)}</b><br>` +
+      `Brecha Abs = ${fmt(state.par)} − ${fmt(state.bcv)} = <b>${fmt(r.gapAbs)} Bs/$</b>`;
 
-    // Tarjeta 2
+    // Tarjeta 2: Precio Sugerido en Divisa Física
+    $('fxEqUsd').textContent = `$${fmt(r.fxEqUsd)}`;
+    $('fxOutBs').textContent = `Salida: ${fmt(r.fxOutBs, 2)} Bs`;
+    $('fxSugUsd').textContent = `$${fmt(r.fxSugUsd)}`;
+    $('fxInBs').textContent = `Ingreso: ${fmt(r.fxInBs, 2)} Bs`;
+    $('fxProfitUsd').textContent = `${r.fxProfitUsd >= 0 ? '+' : '-'}$${fmt(Math.abs(r.fxProfitUsd))}`;
+    $('fxProfitBs').textContent = `${r.fxProfitBs >= 0 ? '+' : ''}${fmt(r.fxProfitBs, 2)} Bs`;
+
+    $('fFxPrice').innerHTML =
+      `Equilibrio USD = (${fmt(r.cUsd,2)} × ${fmt(state.bcv)}) / ${fmt(state.par)} = <b>$${fmt(r.fxEqUsd)}</b><br>` +
+      `Sugerido USD = $${fmt(r.fxEqUsd)} × (1 + ${fmt(state.marginPct,1)}%) × (1 + ${fmt(state.bufferPct,1)}%) = <b>$${fmt(r.fxSugUsd)}</b>`;
+
+    // Tarjeta 3: Brecha Implícita entre Dos Precios
+    $('impGapPct').textContent = fmtPct(r.impGapPct, 2);
+    $('impSavePct').textContent = Number.isFinite(r.impSavePct) ? `${fmt(r.impSavePct, 2)}%` : '—';
+    $('impParRate').textContent = Number.isFinite(r.impParRate) ? `${fmt(r.impParRate)} Bs` : '—';
+
+    const verdictEl = $('impVerdict');
+    if (Number.isFinite(r.impParRate)) {
+      if (r.impParRate < state.par) {
+        const ahorroExtra = r.pCash - r.impUsdNeededAtRealPar;
+        verdictEl.className = 'rounded-xl p-3 mb-3 border text-xs font-semibold bg-blue-50 border-blue-200 text-blue-900';
+        verdictEl.innerHTML = `✅ Conviene pagar en Bs. a BCV (${fmt(r.impBcvTotalBs, 2)} Bs): cambiando tus divisas a ${fmt(state.par)} necesitas <b>$${fmt(r.impUsdNeededAtRealPar, 2)}</b> y ahorras <b>$${fmt(ahorroExtra, 2)}</b> extra frente a pagar $${fmt(r.pCash, 2)} en efectivo.`;
+      } else if (r.impParRate > state.par) {
+        const sobrecosto = r.impUsdNeededAtRealPar - r.pCash;
+        verdictEl.className = 'rounded-xl p-3 mb-3 border text-xs font-semibold bg-emerald-50 border-emerald-200 text-emerald-900';
+        verdictEl.innerHTML = `💵 Conviene pagar en Divisa Física ($${fmt(r.pCash, 2)}): la tasa implícita del comercio (${fmt(r.impParRate)} Bs/$) es más cara que el paralelo real (${fmt(state.par)} Bs/$) por <b>$${fmt(sobrecosto, 2)}</b>.`;
+      } else {
+        verdictEl.className = 'rounded-xl p-3 mb-3 border text-xs font-semibold bg-slate-100 border-slate-200 text-slate-800';
+        verdictEl.textContent = '⚖️ Empate exacto: ambos métodos equivalen al mismo valor real.';
+      }
+    } else {
+      verdictEl.className = 'rounded-xl p-3 mb-3 border text-xs font-semibold bg-slate-50 border-slate-200 text-slate-500';
+      verdictEl.textContent = 'Ingresa ambos precios mayores a 0 para ver la recomendación.';
+    }
+
+    $('fImp').innerHTML =
+      `Brecha implícita = ((${fmt(r.pBcv,2)} − ${fmt(r.pCash,2)}) / ${fmt(r.pCash,2)}) × 100 = <b>${fmtPct(r.impGapPct,2)}</b><br>` +
+      `Tasa implícita = (${fmt(r.pBcv,2)} × ${fmt(state.bcv)}) / ${fmt(r.pCash,2)} = <b>${fmt(r.impParRate)} Bs/$</b>`;
+
+    // Tarjeta 4: Impacto en monto
     $('bsBCV').textContent = `${fmt(r.bsBCV)} Bs`;
     $('bsPAR').textContent = `${fmt(r.bsPAR)} Bs`;
     const bsDiffEl = $('bsDiff');
@@ -532,27 +702,26 @@
       `Par: ${fmt(state.usd,2)} × ${fmt(state.par)} = <b>${fmt(r.bsPAR)} Bs</b><br>` +
       `Δ = ${fmt(r.bsPAR)} − ${fmt(r.bsBCV)} = <b>${fmt(r.bsDiff)} Bs</b>`;
 
-    // Tarjeta 3
-    const arbPctEl = $('arbPct');
-    arbPctEl.textContent = fmtPct(r.arbPct, 2);
+    // Tarjeta 5: Arbitraje
+    $('arbPct').textContent = fmtPct(r.arbPct, 2);
     $('arbUsd').textContent = `${fmt(r.arbUsd)} USD`;
     const arbNetEl = $('arbNet');
     arbNetEl.textContent = `${fmt(r.arbNet)} USD`;
     arbNetEl.className = `metric-value text-2xl ${signClass(r.arbNet)}`;
 
     $('fArb').innerHTML =
-      `Ahorro % = ((Par − BCV) / Par) × 100 = ((${fmt(state.par)} − ${fmt(state.bcv)}) / ${fmt(state.par)}) × 100 = <b>${fmtPct(r.arbPct,2)}</b><br>` +
+      `Ahorro % = ((${fmt(state.par)} − ${fmt(state.bcv)}) / ${fmt(state.par)}) × 100 = <b>${fmtPct(r.arbPct,2)}</b><br>` +
       `USD necesarios a Par para cubrir ${fmt(r.bsBCV)} Bs = ${fmt(r.bsBCV)} / ${fmt(state.par)} = <b>${fmt(r.arbUsd)} USD</b><br>` +
       `Ahorro neto = ${fmt(state.usd,2)} − ${fmt(r.arbUsd)} = <b>${fmt(r.arbNet)} USD</b>`;
 
-    // Tarjeta 4
+    // Tarjeta 6: Factor de ajuste
     $('adjFactor').textContent = `×${fmt(r.adjFactor, 4)}`;
     $('adjPrice').textContent = `${fmt(r.adjPrice)} Bs`;
     $('fAdj').innerHTML =
       `Factor = Par / BCV = ${fmt(state.par)} / ${fmt(state.bcv)} = <b>×${fmt(r.adjFactor,4)}</b><br>` +
       `Precio reposición = ${fmt(state.price)} × ${fmt(r.adjFactor,4)} = <b>${fmt(r.adjPrice)} Bs</b>`;
 
-    // Tarjeta 5
+    // Tarjeta 7: Promedio y simetría
     $('avgRate').textContent = `${fmt(r.avg)} Bs/$`;
     $('devBCV').textContent = fmtPct(r.devBCV, 2);
     $('devPAR').textContent = fmtPct(r.devPAR, 2);
@@ -560,26 +729,21 @@
 
     $('fAvg').innerHTML =
       `Promedio = (${fmt(state.bcv)} + ${fmt(state.par)}) / 2 = <b>${fmt(r.avg)} Bs/$</b><br>` +
-      `Desv. BCV = (${fmt(state.bcv)} − ${fmt(r.avg)}) / ${fmt(r.avg)} = <b>${fmtPct(r.devBCV,2)}</b><br>` +
-      `Desv. Par = (${fmt(state.par)} − ${fmt(r.avg)}) / ${fmt(r.avg)} = <b>${fmtPct(r.devPAR,2)}</b><br>` +
-      `Dif. simétrica = |${fmt(state.par)} − ${fmt(state.bcv)}| / ${fmt(r.avg)} = <b>${fmtPct(r.symPct,2)}</b>`;
+      `Desv. BCV = <b>${fmtPct(r.devBCV,2)}</b> · Desv. Par = <b>${fmtPct(r.devPAR,2)}</b> · Dif. simétrica = <b>${fmtPct(r.symPct,2)}</b>`;
 
-    // Tarjeta 6: Auditoría
+    // Tarjeta 8: Auditoría
     const rows = [
       ['Brecha %', `((${fmt(state.par)} − ${fmt(state.bcv)}) / ${fmt(state.bcv)}) × 100 = ${fmtPct(r.gapPct,2)}`],
       ['Brecha Abs', `${fmt(state.par)} − ${fmt(state.bcv)} = ${fmt(r.gapAbs)} Bs/$`],
+      ['Equilibrio USD', `(${fmt(r.cUsd,2)} × ${fmt(state.bcv)}) / ${fmt(state.par)} = $${fmt(r.fxEqUsd)}`],
+      ['Sugerido USD', `$${fmt(r.fxEqUsd)} × (1+${fmt(state.marginPct,1)}%) × (1+${fmt(state.bufferPct,1)}%) = $${fmt(r.fxSugUsd)}`],
+      ['Brecha Implícita', `((${fmt(r.pBcv,2)} − ${fmt(r.pCash,2)}) / ${fmt(r.pCash,2)}) × 100 = ${fmtPct(r.impGapPct,2)}`],
+      ['Tasa Implícita', `(${fmt(r.pBcv,2)} × ${fmt(state.bcv)}) / ${fmt(r.pCash,2)} = ${fmt(r.impParRate)} Bs/$`],
       ['Bs a BCV', `${fmt(state.usd,2)} × ${fmt(state.bcv)} = ${fmt(r.bsBCV)} Bs`],
       ['Bs a Par', `${fmt(state.usd,2)} × ${fmt(state.par)} = ${fmt(r.bsPAR)} Bs`],
-      ['Diferencia Bs', `${fmt(r.bsPAR)} − ${fmt(r.bsBCV)} = ${fmt(r.bsDiff)} Bs`],
       ['Ahorro %', `((${fmt(state.par)} − ${fmt(state.bcv)}) / ${fmt(state.par)}) × 100 = ${fmtPct(r.arbPct,2)}`],
-      ['USD a Par (cubrir)', `${fmt(r.bsBCV)} / ${fmt(state.par)} = ${fmt(r.arbUsd)} USD`],
-      ['Ahorro USD', `${fmt(state.usd,2)} − ${fmt(r.arbUsd)} = ${fmt(r.arbNet)} USD`],
       ['Factor ajuste', `${fmt(state.par)} / ${fmt(state.bcv)} = ×${fmt(r.adjFactor,4)}`],
-      ['Precio reposición', `${fmt(state.price)} × ${fmt(r.adjFactor,4)} = ${fmt(r.adjPrice)} Bs`],
       ['Promedio', `(${fmt(state.bcv)} + ${fmt(state.par)}) / 2 = ${fmt(r.avg)} Bs/$`],
-      ['Desv. BCV', `(${fmt(state.bcv)} − ${fmt(r.avg)}) / ${fmt(r.avg)} = ${fmtPct(r.devBCV,2)}`],
-      ['Desv. Par', `(${fmt(state.par)} − ${fmt(r.avg)}) / ${fmt(r.avg)} = ${fmtPct(r.devPAR,2)}`],
-      ['Dif. simétrica', `|${fmt(state.par)} − ${fmt(state.bcv)}| / ${fmt(r.avg)} = ${fmtPct(r.symPct,2)}`],
     ];
     $('auditList').innerHTML = rows.map(([k,v]) =>
       `<div class="flex items-start gap-2"><span class="pill bg-slate-100 text-slate-700 shrink-0">${k}</span><span class="mono text-slate-600 break-all">${v}</span></div>`
@@ -592,11 +756,18 @@
     state.par = parseNum(inPAR.value);
     state.usd = parseNum(inUSD.value);
     state.price = parseNum(inPrice.value);
+    state.costUsd = parseNum(inCostUsd.value);
+    state.marginPct = parseNum(inMarginPct.value);
+    state.bufferPct = parseNum(inBufferPct.value);
+    state.priceCash = parseNum(inPriceCash.value);
+    state.priceBcvRef = parseNum(inPriceBcvRef.value);
     render();
   }
 
-  [inBCV, inPAR, inUSD, inPrice].forEach(el => {
-    el.addEventListener('input', syncInputs);
+  [inBCV, inPAR, inUSD, inPrice, inCostUsd, inMarginPct, inBufferPct, inPriceCash, inPriceBcvRef].forEach(el => {
+    ['input', 'keyup', 'change', 'paste'].forEach(evt => {
+      el.addEventListener(evt, () => setTimeout(syncInputs, 0));
+    });
   });
 
   $('btnSwap').addEventListener('click', () => {
@@ -606,10 +777,15 @@
   });
 
   $('btnExample').addEventListener('click', () => {
-    inBCV.value = '36.50';
-    inPAR.value = '47.80';
+    inBCV.value = '920.00';
+    inPAR.value = '1150.00';
     inUSD.value = '100';
     inPrice.value = '1000';
+    inCostUsd.value = '8.50';
+    inMarginPct.value = '5';
+    inBufferPct.value = '3';
+    inPriceCash.value = '22';
+    inPriceBcvRef.value = '27';
     syncInputs();
     showToast('Valores de ejemplo cargados');
   });
@@ -632,8 +808,7 @@
       render();
     });
   });
-  // estado inicial del selector
-  document.querySelector('.dec-btn[data-dec="4"]').click();
+  document.querySelector('.dec-btn[data-dec="2"]').click();
 
   // Copiar
   document.querySelectorAll('.copy-btn').forEach(btn => {
@@ -645,6 +820,12 @@
       switch (key) {
         case 'gap':
           text = `Brecha Cambiaria: ${fmtPct(r.gapPct,2)} | Brecha Abs: ${fmt(r.gapAbs)} Bs/$`;
+          break;
+        case 'fxprice':
+          text = `Costo BCV: $${fmt(r.cUsd,2)} (${fmt(r.fxOutBs,2)} Bs) | Equilibrio USD: $${fmt(r.fxEqUsd)} | Sugerido USD: $${fmt(r.fxSugUsd)}`;
+          break;
+        case 'imp':
+          text = `Brecha Implícita ($${fmt(r.pCash,2)} vs $${fmt(r.pBcv,2)} BCV): ${fmtPct(r.impGapPct,2)} | Tasa Implícita: ${fmt(r.impParRate)} Bs/$`;
           break;
         case 'impact':
           text = `Impacto USD ${fmt(state.usd,2)}: BCV=${fmt(r.bsBCV)} Bs | Par=${fmt(r.bsPAR)} Bs | Δ=${fmt(r.bsDiff)} Bs`;
@@ -667,9 +848,16 @@
   });
 
   // Inicial
-  inBCV.value = '36.50';
-  inPAR.value = '47.80';
+  inBCV.value = '920.00';
+  inPAR.value = '1150.00';
   syncInputs();
+
+  // Registro Service Worker para PWA / APK
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
 })();
 </script>
 </body>
