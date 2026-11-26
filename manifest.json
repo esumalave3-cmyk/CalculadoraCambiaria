@@ -1,14 +1,32 @@
 {
-  "name": "Brecha Cambiaria",
+  "id": "./",
+  "name": "Brecha Cambiaria · BCV vs Paralela",
   "short_name": "Brecha",
-  "description": "Calcula la brecha cambiaria BCV vs Paralela",
-  "start_url": "./index.html",
+  "description": "Calcula la brecha cambiaria BCV vs Paralela, precio óptimo en divisa física y brecha implícita.",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#f8fafc",
   "theme_color": "#0f172a",
   "icons": [
-    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png" }
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }
