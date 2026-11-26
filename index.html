@@ -25,53 +25,76 @@
   .card {
     background: #ffffff;
     border: 1px solid #e2e8f0;
-    border-radius: 1rem;
-    box-shadow: 0 1px 2px rgba(15,23,42,.04), 0 4px 16px rgba(15,23,42,.04);
+    border-radius: 1.1rem;
+    box-shadow: 0 1px 2px rgba(15,23,42,.04), 0 6px 20px rgba(15,23,42,.04);
   }
   .pill {
     display: inline-flex; align-items: center; gap: .35rem;
-    padding: .25rem .6rem; border-radius: 9999px;
+    padding: .25rem .65rem; border-radius: 9999px;
     font-size: .72rem; font-weight: 600; letter-spacing: .02em;
   }
   .input-base {
     width: 100%;
     background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: .75rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: .8rem;
     padding: .75rem 1rem;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 1rem;
-    font-weight: 600;
+    font-size: 1.05rem;
+    font-weight: 700;
     color: #0f172a;
     transition: all .15s ease;
     outline: none;
   }
   .input-base:focus {
-    border-color: #6366f1;
+    border-color: #4f46e5;
     background: #fff;
-    box-shadow: 0 0 0 4px rgba(99,102,241,.12);
+    box-shadow: 0 0 0 4px rgba(79,70,229,.12);
   }
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
-    padding: .55rem .9rem; border-radius: .65rem;
+    padding: .55rem .9rem; border-radius: .7rem;
     font-weight: 600; font-size: .82rem;
     transition: all .15s ease; cursor: pointer;
     border: 1px solid transparent;
   }
-  .btn-primary { background: #0f172a; color: #fff; }
-  .btn-primary:hover { background: #1e293b; }
   .btn-ghost { background: #fff; color: #334155; border-color: #e2e8f0; }
   .btn-ghost:hover { background: #f1f5f9; }
   .btn-swap {
-    width: 2.5rem; height: 2.5rem; border-radius: 9999px;
+    width: 2.6rem; height: 2.6rem; border-radius: 9999px;
     background: #eef2ff; color: #4338ca;
     display: flex; align-items: center; justify-content: center;
     transition: transform .25s ease;
   }
   .btn-swap:hover { transform: rotate(180deg); background: #e0e7ff; }
+  .tab-btn {
+    flex: 1;
+    padding: .7rem .75rem;
+    border-radius: .75rem;
+    font-size: .82rem;
+    font-weight: 700;
+    transition: all .15s ease;
+    text-align: center;
+    cursor: pointer;
+  }
+  .tab-btn.active {
+    background: #0f172a;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(15,23,42,.18);
+  }
+  .tab-btn:not(.active) {
+    color: #475569;
+  }
+  .tab-btn:not(.active):hover {
+    background: #f1f5f9;
+    color: #0f172a;
+  }
   .copy-btn {
-    background: transparent; color: #64748b;
-    padding: .25rem .45rem; border-radius: .4rem;
+    background: #f8fafc; color: #475569;
+    border: 1px solid #e2e8f0;
+    padding: .3rem .6rem; border-radius: .5rem;
+    font-size: .74rem; font-weight: 600;
+    display: inline-flex; align-items: center; gap: .35rem;
     transition: all .15s ease;
   }
   .copy-btn:hover { background: #f1f5f9; color: #0f172a; }
@@ -82,19 +105,19 @@
   }
   .formula-row {
     font-family: 'JetBrains Mono', monospace;
-    font-size: .78rem;
+    font-size: .76rem;
     color: #475569;
     background: #f8fafc;
-    border: 1px dashed #e2e8f0;
-    border-radius: .5rem;
-    padding: .5rem .7rem;
+    border: 1px dashed #cbd5e1;
+    border-radius: .6rem;
+    padding: .55rem .75rem;
   }
   .toast {
     position: fixed; bottom: 1.5rem; left: 50%;
     transform: translateX(-50%) translateY(20px);
     background: #0f172a; color: #fff;
-    padding: .7rem 1.1rem; border-radius: .7rem;
-    font-size: .85rem; font-weight: 500;
+    padding: .7rem 1.15rem; border-radius: .75rem;
+    font-size: .85rem; font-weight: 600;
     opacity: 0; pointer-events: none;
     transition: all .25s ease;
     z-index: 50;
@@ -103,364 +126,381 @@
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .warn-banner {
     background: #fef3c7; border: 1px solid #fde68a;
-    color: #92400e; padding: .6rem .9rem; border-radius: .65rem;
-    font-size: .82rem; font-weight: 500;
+    color: #92400e; padding: .65rem .9rem; border-radius: .75rem;
+    font-size: .82rem; font-weight: 600;
   }
   .negative { color: var(--loss); }
   .positive { color: var(--gap); }
   .neutral  { color: var(--warn); }
   .section-title {
     display: flex; align-items: center; gap: .5rem;
-    font-size: .72rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: .08em;
+    font-size: .74rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .07em;
     color: #64748b;
   }
   .section-title .dot {
-    width: 6px; height: 6px; border-radius: 9999px; background: currentColor;
+    width: 7px; height: 7px; border-radius: 9999px; background: currentColor;
   }
   .divider { height: 1px; background: #e2e8f0; }
   .chip-bcv { background: #dbeafe; color: #1e40af; }
   .chip-par { background: #ffedd5; color: #9a3412; }
+  details > summary { list-style: none; cursor: pointer; }
+  details > summary::-webkit-details-marker { display: none; }
 </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen">
 
-<div class="max-w-6xl mx-auto px-4 py-8 md:py-12">
+<div class="max-w-4xl mx-auto px-4 py-6 md:py-10">
 
-  <header class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
+  <!-- HEADER -->
+  <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
     <div>
-      <div class="flex items-center gap-2 mb-2">
+      <div class="flex items-center gap-2 mb-1.5">
         <span class="pill bg-slate-900 text-white">Venezuela</span>
         <span class="pill chip-bcv">BCV</span>
         <span class="pill chip-par">Paralela</span>
       </div>
       <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900">
-        Analizador de <span class="text-indigo-600">Brecha Cambiaria</span>
+        Calculadora de <span class="text-indigo-600">Brecha Cambiaria</span>
       </h1>
-      <p class="text-slate-500 text-sm md:text-base mt-1 max-w-2xl">
-        Calcula en tiempo real la diferencia entre la <b>Tasa Oficial BCV</b> y la <b>Tasa Paralela / Referencial</b>,
-        el precio óptimo en divisa física, la brecha implícita entre dos precios y el factor de reposición.
+      <p class="text-slate-500 text-xs md:text-sm mt-0.5">
+        Coloca las tasas del día y elige qué quieres resolver hoy.
       </p>
     </div>
-    <div class="flex flex-wrap items-center gap-2">
-      <label class="text-xs font-semibold text-slate-500 mr-1">Decimales</label>
-      <div class="inline-flex rounded-lg border border-slate-200 bg-white overflow-hidden">
-        <button data-dec="2" class="dec-btn px-3 py-1.5 text-sm font-semibold">2</button>
-        <button data-dec="3" class="dec-btn px-3 py-1.5 text-sm font-semibold">3</button>
-        <button data-dec="4" class="dec-btn px-3 py-1.5 text-sm font-semibold">4</button>
-      </div>
-      <button id="btnExample" class="btn btn-ghost" title="Cargar valores de ejemplo">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+    <div class="flex items-center gap-2">
+      <button id="btnExample" class="btn btn-ghost" title="Cargar ejemplo">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
         Ejemplo
       </button>
-      <button id="btnClear" class="btn btn-ghost" title="Limpiar campos">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+      <button id="btnClear" class="btn btn-ghost" title="Limpiar">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
         Limpiar
       </button>
     </div>
   </header>
 
-  <div id="warnBox" class="warn-banner mb-5 hidden"></div>
+  <!-- ALERTA -->
+  <div id="warnBox" class="warn-banner mb-4 hidden"></div>
 
-  <section class="card p-5 md:p-6 mb-6">
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
-      <div class="md:col-span-4">
-        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+  <!-- PASO 1: TASAS DEL DÍA -->
+  <section class="card p-4 md:p-6 mb-4">
+    <div class="flex items-center justify-between mb-3">
+      <span class="text-xs font-extrabold uppercase tracking-wider text-indigo-600">Paso 1 · Escribe las tasas de hoy</span>
+      <button class="copy-btn" data-copy="gap">Copiar resumen</button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+      <div class="sm:col-span-5">
+        <label class="block text-xs font-bold text-slate-700 mb-1">
           Tasa Oficial <span class="pill chip-bcv ml-1">BCV</span>
         </label>
         <div class="relative">
-          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 mono text-sm">Bs/USD</span>
-          <input id="inBCV" type="text" inputmode="decimal" placeholder="920.00" class="input-base pl-16" />
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 mono text-xs font-semibold">Bs/$</span>
+          <input id="inBCV" type="text" inputmode="decimal" placeholder="920.00" class="input-base pl-12" />
         </div>
+        <span class="block text-[11px] text-slate-400 mt-1">Tasa del Banco Central</span>
       </div>
 
-      <div class="md:col-span-1 flex justify-center">
-        <button id="btnSwap" class="btn-swap" title="Intercambiar tasas">
+      <div class="sm:col-span-2 flex justify-center pt-1 sm:pt-3">
+        <button id="btnSwap" class="btn-swap" title="Invertir tasas">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10l-4 4 4 4"/><path d="M3 14h14"/><path d="M17 4l4 4-4 4"/><path d="M21 8H7"/></svg>
         </button>
       </div>
 
-      <div class="md:col-span-4">
-        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
-          Tasa Paralela / Referencial <span class="pill chip-par ml-1">Paralela</span>
+      <div class="sm:col-span-5">
+        <label class="block text-xs font-bold text-slate-700 mb-1">
+          Tasa Paralela / Calle <span class="pill chip-par ml-1">Paralela</span>
         </label>
         <div class="relative">
-          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 mono text-sm">Bs/USD</span>
-          <input id="inPAR" type="text" inputmode="decimal" placeholder="1150.00" class="input-base pl-16" />
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 mono text-xs font-semibold">Bs/$</span>
+          <input id="inPAR" type="text" inputmode="decimal" placeholder="1150.00" class="input-base pl-12" />
         </div>
+        <span class="block text-[11px] text-slate-400 mt-1">Tasa a la que cambias dólares</span>
       </div>
+    </div>
 
-      <div class="md:col-span-3">
-        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
-          Monto de prueba (USD)
-        </label>
-        <div class="relative">
-          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 mono text-sm">USD</span>
-          <input id="inUSD" type="text" inputmode="decimal" placeholder="100" class="input-base pl-14" value="100" />
-        </div>
+    <!-- RESUMEN INSTANTÁNEO DE LA BRECHA -->
+    <div class="mt-4 pt-4 border-t border-slate-100 grid grid-cols-3 gap-2.5 text-center">
+      <div class="bg-emerald-50/70 border border-emerald-100 rounded-xl p-2.5">
+        <div class="text-[11px] font-semibold text-slate-500">Brecha actual</div>
+        <div id="gapPct" class="metric-value text-xl md:text-2xl positive mt-0.5">—</div>
+      </div>
+      <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5">
+        <div class="text-[11px] font-semibold text-slate-500">Diferencia por $1</div>
+        <div id="gapAbs" class="metric-value text-lg md:text-xl text-slate-900 mt-0.5">—</div>
+      </div>
+      <div class="bg-blue-50/70 border border-blue-100 rounded-xl p-2.5">
+        <div class="text-[11px] font-semibold text-blue-800">Ahorro pagando en Bs</div>
+        <div id="arbPctTop" class="metric-value text-lg md:text-xl text-blue-700 mt-0.5">—</div>
       </div>
     </div>
   </section>
 
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+  <!-- PASO 2: SELECTOR DE SITUACIÓN (3 PESTAÑAS INTUITIVAS) -->
+  <div class="mb-4">
+    <div class="text-xs font-extrabold uppercase tracking-wider text-indigo-600 mb-2 px-1">
+      Paso 2 · ¿Qué vas a hacer ahora?
+    </div>
+    <div class="bg-white border border-slate-200 p-1.5 rounded-2xl flex gap-1.5 shadow-sm">
+      <button type="button" class="tab-btn active" data-tab="pagar">
+        💳 Voy a Pagar
+      </button>
+      <button type="button" class="tab-btn" data-tab="vender">
+        🏷️ Voy a Vender
+      </button>
+      <button type="button" class="tab-btn" data-tab="convertir">
+        🔄 Convertir Monto
+      </button>
+    </div>
+  </div>
 
+  <!-- VISTA 1: VOY A PAGAR (¿CONVIENE BS O EFECTIVO?) -->
+  <section id="panel-pagar" class="tab-panel space-y-4">
     <article class="card p-5 md:p-6">
-      <div class="flex items-center justify-between mb-3">
-        <div class="section-title"><span class="dot"></span> Brecha Cambiaria</div>
-        <button class="copy-btn" data-copy="gap" title="Copiar">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
-        </button>
+      <div class="flex items-start justify-between gap-2 mb-2">
+        <div>
+          <h2 class="text-base md:text-lg font-extrabold text-slate-900">¿Pago en Bolívares o en Dólares?</h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Úsalo cuando te dan un precio en <b>divisa ($)</b> y otro más alto si pagas en Bs. a tasa <b>BCV ($)</b>.
+          </p>
+        </div>
+        <button class="copy-btn shrink-0" data-copy="imp">Copiar</button>
       </div>
 
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4">
         <div>
-          <div class="text-xs text-slate-500 font-medium mb-1">Brecha (%)</div>
-          <div id="gapPct" class="metric-value text-3xl md:text-4xl positive">—</div>
-          <div id="gapPctLabel" class="text-xs text-slate-500 mt-1">Paralelo vs BCV</div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Precio si pagas en Dólares ($)</label>
+          <input id="inPriceCash" type="text" inputmode="decimal" value="22" class="input-base" />
+          <span class="block text-[11px] text-slate-400 mt-1">Ej: $22 en efectivo / Zelle</span>
         </div>
         <div>
-          <div class="text-xs text-slate-500 font-medium mb-1">Brecha Absoluta</div>
-          <div id="gapAbs" class="metric-value text-2xl md:text-3xl text-slate-900">—</div>
-          <div class="text-xs text-slate-500 mt-1">Bs por cada dólar</div>
-        </div>
-      </div>
-
-      <div class="divider my-4"></div>
-      <div class="formula-row" id="fGap"></div>
-    </article>
-
-    <article class="card p-5 md:p-6 border-emerald-200">
-      <div class="flex items-center justify-between mb-3">
-        <div class="section-title text-emerald-700"><span class="dot"></span> Precio Sugerido en Divisa Física</div>
-        <button class="copy-btn" data-copy="fxprice" title="Copiar">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
-        </button>
-      </div>
-      <p class="text-xs text-slate-500 mb-3">
-        Pagas el costo en Bs. a tasa <b>BCV</b> y recibes <b>USD físico</b> para cambiarlo en el mercado <b>Paralelo</b>.
-      </p>
-
-      <div class="grid grid-cols-3 gap-2.5 mb-4">
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Costo BCV ($)</label>
-          <input id="inCostUsd" type="text" inputmode="decimal" value="8.50" class="input-base !py-2 !px-3 text-sm" />
-        </div>
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Margen (%)</label>
-          <input id="inMarginPct" type="text" inputmode="decimal" value="5" class="input-base !py-2 !px-3 text-sm" />
-        </div>
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Colchón (%)</label>
-          <input id="inBufferPct" type="text" inputmode="decimal" value="3" class="input-base !py-2 !px-3 text-sm" />
+          <label class="block text-xs font-bold text-slate-700 mb-1">Precio si pagas en Bs. a BCV ($)</label>
+          <input id="inPriceBcvRef" type="text" inputmode="decimal" value="27" class="input-base" />
+          <span class="block text-[11px] text-slate-400 mt-1">Ej: $27 multiplicado por tasa BCV</span>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
-          <div class="text-[11px] uppercase font-semibold text-slate-600">Equilibrio USD</div>
-          <div id="fxEqUsd" class="metric-value text-xl text-slate-900 mt-1">—</div>
-          <div id="fxOutBs" class="text-[11px] text-slate-500 mt-0.5">Salida: — Bs</div>
-        </div>
-        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3">
-          <div class="text-[11px] uppercase font-semibold text-emerald-700">Sugerido USD</div>
-          <div id="fxSugUsd" class="metric-value text-xl text-emerald-700 mt-1">—</div>
-          <div id="fxInBs" class="text-[11px] text-emerald-700 mt-0.5">Ingreso: — Bs</div>
-        </div>
-        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-3">
-          <div class="text-[11px] uppercase font-semibold text-indigo-700">Utilidad Neta</div>
-          <div id="fxProfitUsd" class="metric-value text-xl text-indigo-900 mt-1">—</div>
-          <div id="fxProfitBs" class="text-[11px] text-indigo-700 mt-0.5">— Bs</div>
-        </div>
-      </div>
-
-      <div class="divider my-4"></div>
-      <div class="formula-row" id="fFxPrice"></div>
-    </article>
-
-    <article class="card p-5 md:p-6">
-      <div class="flex items-center justify-between mb-3">
-        <div class="section-title text-indigo-600"><span class="dot"></span> Brecha Implícita (Dos Precios)</div>
-        <button class="copy-btn" data-copy="imp" title="Copiar">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
-        </button>
-      </div>
-      <p class="text-xs text-slate-500 mb-3">
-        Compara cuando te ofrecen un precio en <b>divisa física ($)</b> y otro más alto para pagar en Bs. a tasa <b>BCV ($)</b>.
-      </p>
-
-      <div class="grid grid-cols-2 gap-3 mb-3">
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Precio en Divisa ($)</label>
-          <input id="inPriceCash" type="text" inputmode="decimal" value="22" class="input-base !py-2 !px-3 text-sm" />
-        </div>
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Precio a BCV ($)</label>
-          <input id="inPriceBcvRef" type="text" inputmode="decimal" value="27" class="input-base !py-2 !px-3 text-sm" />
-        </div>
-      </div>
-
-      <div id="impVerdict" class="rounded-xl p-3 mb-3 border text-xs font-semibold">
+      <!-- VEREDICTO CLARO EN LENGUAJE COTIDIANO -->
+      <div id="impVerdict" class="rounded-2xl p-4 border text-sm font-semibold leading-relaxed">
         Calculando recomendación...
       </div>
 
-      <div class="grid grid-cols-3 gap-2.5">
-        <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5">
-          <div class="text-[10px] uppercase font-semibold text-slate-500">Brecha Implícita</div>
+      <div class="grid grid-cols-3 gap-2.5 mt-4">
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
+          <div class="text-[11px] font-semibold text-slate-500">Te cobran de más</div>
           <div id="impGapPct" class="metric-value text-lg text-slate-900 mt-0.5">—</div>
+          <div class="text-[10px] text-slate-400">brecha del comercio</div>
         </div>
-        <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-2.5">
-          <div class="text-[10px] uppercase font-semibold text-emerald-700">Ahorro Efectivo</div>
+        <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-3">
+          <div class="text-[11px] font-semibold text-emerald-700">Descuento efectivo</div>
           <div id="impSavePct" class="metric-value text-lg text-emerald-700 mt-0.5">—</div>
+          <div class="text-[10px] text-emerald-600">si pagas directo en $</div>
         </div>
-        <div class="bg-orange-50 border border-orange-100 rounded-xl p-2.5">
-          <div class="text-[10px] uppercase font-semibold text-orange-700">Tasa Implícita</div>
-          <div id="impParRate" class="metric-value text-base text-orange-900 mt-0.5">—</div>
+        <div class="bg-orange-50 border border-orange-100 rounded-xl p-3">
+          <div class="text-[11px] font-semibold text-orange-700">Tasa del comercio</div>
+          <div id="impParRate" class="metric-value text-base md:text-lg text-orange-900 mt-0.5">—</div>
+          <div class="text-[10px] text-orange-600">Bs/$ que te aplican</div>
         </div>
       </div>
-
-      <div class="divider my-4"></div>
-      <div class="formula-row" id="fImp"></div>
     </article>
+  </section>
 
+  <!-- VISTA 2: VOY A VENDER (PRECIO EN DIVISA FÍSICA PARA NO PERDER) -->
+  <section id="panel-vender" class="tab-panel hidden space-y-4">
     <article class="card p-5 md:p-6">
-      <div class="flex items-center justify-between mb-3">
-        <div class="section-title"><span class="dot"></span> Impacto en monto USD</div>
-        <button class="copy-btn" data-copy="impact" title="Copiar">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
-        </button>
+      <div class="flex items-start justify-between gap-2 mb-2">
+        <div>
+          <h2 class="text-base md:text-lg font-extrabold text-slate-900">¿A cuánto vender en Dólares físicos?</h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Si compras tu mercancía pagando en Bs. a <b>BCV</b> y tus clientes te pagan con <b>dólares en efectivo</b>.
+          </p>
+        </div>
+        <button class="copy-btn shrink-0" data-copy="fxprice">Copiar</button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 my-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Tu costo a BCV ($)</label>
+          <input id="inCostUsd" type="text" inputmode="decimal" value="8.50" class="input-base" />
+          <span class="block text-[11px] text-slate-400 mt-1">Lo que pagas a BCV</span>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Ganancia deseada (%)</label>
+          <input id="inMarginPct" type="text" inputmode="decimal" value="5" class="input-base" />
+          <span class="block text-[11px] text-slate-400 mt-1">Tu margen neto</span>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Colchón semanal (%)</label>
+          <input id="inBufferPct" type="text" inputmode="decimal" value="3" class="input-base" />
+          <span class="block text-[11px] text-slate-400 mt-1">Para no remarcar diario</span>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div class="bg-blue-50 border border-blue-100 rounded-xl p-3">
-          <div class="text-[11px] uppercase font-semibold text-blue-700">A tasa BCV</div>
-          <div id="bsBCV" class="metric-value text-xl text-blue-900 mt-1">—</div>
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5">
+          <div class="text-xs font-bold text-slate-600">1. Mínimo para no perder</div>
+          <div id="fxEqUsd" class="metric-value text-2xl text-slate-900 mt-1">—</div>
+          <div id="fxOutBs" class="text-[11px] text-slate-500 mt-1">Costo: — Bs</div>
         </div>
-        <div class="bg-orange-50 border border-orange-100 rounded-xl p-3">
-          <div class="text-[11px] uppercase font-semibold text-orange-700">A tasa Paralela</div>
-          <div id="bsPAR" class="metric-value text-xl text-orange-900 mt-1">—</div>
+        <div class="bg-emerald-50 border-2 border-emerald-400 rounded-xl p-3.5">
+          <div class="text-xs font-bold text-emerald-800">2. Precio de venta sugerido</div>
+          <div id="fxSugUsd" class="metric-value text-2xl md:text-3xl text-emerald-700 mt-1">—</div>
+          <div id="fxInBs" class="text-[11px] text-emerald-700 mt-1">Al cambiar: — Bs</div>
         </div>
-        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
-          <div class="text-[11px] uppercase font-semibold text-slate-600">Diferencia</div>
+        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-3.5">
+          <div class="text-xs font-bold text-indigo-800">3. Tu ganancia libre</div>
+          <div id="fxProfitUsd" class="metric-value text-2xl text-indigo-900 mt-1">—</div>
+          <div id="fxProfitBs" class="text-[11px] text-indigo-700 mt-1">— Bs</div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- VISTA 3: CONVERTIR MONTO (BCV VS PARALELA) -->
+  <section id="panel-convertir" class="tab-panel hidden space-y-4">
+    <article class="card p-5 md:p-6">
+      <div class="flex items-start justify-between gap-2 mb-3">
+        <div>
+          <h2 class="text-base md:text-lg font-extrabold text-slate-900">Comparar un monto en Bolívares</h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Mira cuánto son tus dólares a tasa BCV, a tasa Paralela y cuánto ahorras al pagar en Bs.
+          </p>
+        </div>
+        <button class="copy-btn shrink-0" data-copy="impact">Copiar</button>
+      </div>
+
+      <div class="mb-4 max-w-xs">
+        <label class="block text-xs font-bold text-slate-700 mb-1">Cantidad en Dólares ($)</label>
+        <input id="inUSD" type="text" inputmode="decimal" placeholder="100" class="input-base" value="100" />
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+        <div class="bg-blue-50 border border-blue-100 rounded-xl p-3.5">
+          <div class="text-xs font-bold text-blue-800">En Bs. a tasa BCV</div>
+          <div id="bsBCV" class="metric-value text-xl text-blue-950 mt-1">—</div>
+        </div>
+        <div class="bg-orange-50 border border-orange-100 rounded-xl p-3.5">
+          <div class="text-xs font-bold text-orange-800">En Bs. a tasa Paralela</div>
+          <div id="bsPAR" class="metric-value text-xl text-orange-950 mt-1">—</div>
+        </div>
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5">
+          <div class="text-xs font-bold text-slate-600">Diferencia en Bs.</div>
           <div id="bsDiff" class="metric-value text-xl text-slate-900 mt-1">—</div>
         </div>
       </div>
 
-      <div class="divider my-4"></div>
-      <div class="formula-row" id="fImpact"></div>
+      <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <div>
+          <div class="text-xs font-bold text-emerald-900">Si pagas una factura BCV cambiando tus dólares al paralelo:</div>
+          <div class="text-xs text-emerald-700 mt-0.5">
+            Solo necesitas cambiar <b id="arbUsd">—</b> y te quedan libres <b id="arbNet">—</b> en tu bolsillo.
+          </div>
+        </div>
+        <div id="arbPct" class="metric-value text-2xl text-emerald-700 shrink-0">—</div>
+      </div>
     </article>
+  </section>
 
-    <article class="card p-5 md:p-6">
-      <div class="flex items-center justify-between mb-3">
-        <div class="section-title"><span class="dot"></span> Ahorro / Arbitraje al pagar en Bs</div>
-        <button class="copy-btn" data-copy="arb" title="Copiar">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
-        </button>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+  <!-- SECCIÓN AVANZADA / TÉCNICA (PLEGABLE PARA NO CONFUNDIR, PERO SIEMPRE DISPONIBLE) -->
+  <details id="advancedSection" class="mt-6 group">
+    <summary class="card p-4 flex items-center justify-between hover:bg-slate-50/80 transition">
+      <div class="flex items-center gap-2.5">
+        <span class="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center text-sm font-bold">fx</span>
         <div>
-          <div class="text-xs text-slate-500 font-medium">Ahorro %</div>
-          <div id="arbPct" class="metric-value text-2xl text-emerald-600">—</div>
-          <div class="text-[11px] text-slate-500">(Par − BCV) / Par</div>
+          <div class="text-sm font-bold text-slate-900">Modo Avanzado, Fórmulas y Excel</div>
+          <div class="text-xs text-slate-500">Toca aquí para ver decimales, reposición en Bs., tasa promedio y auditoría</div>
         </div>
-        <div>
-          <div class="text-xs text-slate-500 font-medium">USD a tasa Paralela</div>
-          <div id="arbUsd" class="metric-value text-2xl text-slate-900">—</div>
-          <div class="text-[11px] text-slate-500">para cubrir factura a BCV</div>
-        </div>
-        <div>
-          <div class="text-xs text-slate-500 font-medium">Ahorro neto (USD)</div>
-          <div id="arbNet" class="metric-value text-2xl text-emerald-600">—</div>
-          <div class="text-[11px] text-slate-500">diferencia en dólares</div>
+      </div>
+      <svg class="w-5 h-5 text-slate-400 transition-transform duration-200 group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </summary>
+
+    <div class="mt-4 space-y-4">
+
+      <!-- CONTROL DE DECIMALES -->
+      <div class="card p-4 flex flex-wrap items-center justify-between gap-3">
+        <span class="text-xs font-bold text-slate-700">Cantidad de decimales en resultados:</span>
+        <div class="inline-flex rounded-lg border border-slate-200 bg-slate-50 overflow-hidden">
+          <button data-dec="2" class="dec-btn px-3.5 py-1.5 text-xs font-bold">2 decimales</button>
+          <button data-dec="3" class="dec-btn px-3.5 py-1.5 text-xs font-bold">3 decimales</button>
+          <button data-dec="4" class="dec-btn px-3.5 py-1.5 text-xs font-bold">4 decimales</button>
         </div>
       </div>
 
-      <div class="divider my-4"></div>
-      <div class="formula-row" id="fArb"></div>
-    </article>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-    <article class="card p-5 md:p-6">
-      <div class="flex items-center justify-between mb-3">
-        <div class="section-title"><span class="dot"></span> Factor de Ajuste / Reposición</div>
-        <button class="copy-btn" data-copy="adj" title="Copiar">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
-        </button>
+        <!-- FACTOR DE AJUSTE / REPOSICIÓN EN BS -->
+        <article class="card p-5">
+          <div class="flex items-center justify-between mb-3">
+            <div class="section-title"><span class="dot"></span> Factor de Ajuste / Reposición</div>
+            <button class="copy-btn" data-copy="adj">Copiar</button>
+          </div>
+          <div class="grid grid-cols-2 gap-3 items-end">
+            <div>
+              <div class="text-xs text-slate-500 font-medium mb-1">Multiplicador (Par / BCV)</div>
+              <div id="adjFactor" class="metric-value text-2xl text-indigo-600">—</div>
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Precio en Bs. a BCV</label>
+              <input id="inPrice" type="text" inputmode="decimal" placeholder="0.00" class="input-base !py-2 text-sm" value="1000" />
+            </div>
+          </div>
+          <div class="mt-3 bg-indigo-50 border border-indigo-100 rounded-xl p-3 flex items-center justify-between">
+            <span class="text-xs font-semibold text-indigo-800">Reposición sugerida:</span>
+            <span id="adjPrice" class="metric-value text-lg text-indigo-950">—</span>
+          </div>
+          <div class="formula-row mt-3" id="fAdj"></div>
+        </article>
+
+        <!-- PROMEDIO Y SIMETRÍA -->
+        <article class="card p-5">
+          <div class="flex items-center justify-between mb-3">
+            <div class="section-title"><span class="dot"></span> Tasa Promedio y Desviación</div>
+            <button class="copy-btn" data-copy="avg">Copiar</button>
+          </div>
+          <div class="grid grid-cols-2 gap-2.5">
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5">
+              <div class="text-[10px] uppercase font-bold text-slate-500">Tasa Promedio</div>
+              <div id="avgRate" class="metric-value text-base text-slate-900 mt-0.5">—</div>
+            </div>
+            <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-2.5">
+              <div class="text-[10px] uppercase font-bold text-emerald-700">Dif. Simétrica %</div>
+              <div id="symPct" class="metric-value text-base text-emerald-900 mt-0.5">—</div>
+            </div>
+            <div class="bg-blue-50 border border-blue-100 rounded-xl p-2.5">
+              <div class="text-[10px] uppercase font-bold text-blue-700">Desv. BCV</div>
+              <div id="devBCV" class="metric-value text-base text-blue-900 mt-0.5">—</div>
+            </div>
+            <div class="bg-orange-50 border border-orange-100 rounded-xl p-2.5">
+              <div class="text-[10px] uppercase font-bold text-orange-700">Desv. Paralela</div>
+              <div id="devPAR" class="metric-value text-base text-orange-900 mt-0.5">—</div>
+            </div>
+          </div>
+          <div class="formula-row mt-3" id="fAvg"></div>
+        </article>
+
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <div class="text-xs text-slate-500 font-medium mb-1">Multiplicador (Par / BCV)</div>
-          <div id="adjFactor" class="metric-value text-3xl text-indigo-600">—</div>
-          <div class="text-[11px] text-slate-500">aplicar a precio cobrado a BCV</div>
+      <!-- FÓRMULAS DETALLADAS Y AUDITORÍA -->
+      <article class="card p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div class="section-title"><span class="dot"></span> Auditoría Completa de Fórmulas</div>
+          <button class="copy-btn" data-copy="audit">Copiar todo</button>
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
-            Precio cobrado a BCV (Bs)
-          </label>
-          <input id="inPrice" type="text" inputmode="decimal" placeholder="0.00" class="input-base" value="0" />
+        <div class="space-y-2 mb-3">
+          <div class="formula-row" id="fGap"></div>
+          <div class="formula-row" id="fFxPrice"></div>
+          <div class="formula-row" id="fImp"></div>
+          <div class="formula-row" id="fImpact"></div>
+          <div class="formula-row" id="fArb"></div>
         </div>
-      </div>
+        <div id="auditList" class="space-y-2 text-xs"></div>
+      </article>
 
-      <div class="mt-4 bg-indigo-50 border border-indigo-100 rounded-xl p-3 flex items-center justify-between">
-        <div>
-          <div class="text-[11px] uppercase font-semibold text-indigo-700">Precio de reposición sugerido</div>
-          <div class="text-[11px] text-indigo-600">para proteger valor real al reponer a Paralelo</div>
-        </div>
-        <div id="adjPrice" class="metric-value text-xl text-indigo-900">—</div>
-      </div>
-
-      <div class="divider my-4"></div>
-      <div class="formula-row" id="fAdj"></div>
-    </article>
-
-    <article class="card p-5 md:p-6">
-      <div class="flex items-center justify-between mb-3">
-        <div class="section-title"><span class="dot"></span> Tasa Promedio y Desviación Simétrica</div>
-        <button class="copy-btn" data-copy="avg" title="Copiar">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
-        </button>
-      </div>
-
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
-          <div class="text-[11px] uppercase font-semibold text-slate-600">Promedio</div>
-          <div id="avgRate" class="metric-value text-lg text-slate-900 mt-1">—</div>
-        </div>
-        <div class="bg-blue-50 border border-blue-100 rounded-xl p-3">
-          <div class="text-[11px] uppercase font-semibold text-blue-700">Desv. BCV</div>
-          <div id="devBCV" class="metric-value text-lg text-blue-900 mt-1">—</div>
-        </div>
-        <div class="bg-orange-50 border border-orange-100 rounded-xl p-3">
-          <div class="text-[11px] uppercase font-semibold text-orange-700">Desv. Paralela</div>
-          <div id="devPAR" class="metric-value text-lg text-orange-900 mt-1">—</div>
-        </div>
-        <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-3">
-          <div class="text-[11px] uppercase font-semibold text-emerald-700">Dif. Simétrica %</div>
-          <div id="symPct" class="metric-value text-lg text-emerald-900 mt-1">—</div>
-        </div>
-      </div>
-
-      <div class="divider my-4"></div>
-      <div class="formula-row" id="fAvg"></div>
-    </article>
-
-    <article class="card p-5 md:p-6">
-      <div class="flex items-center justify-between mb-3">
-        <div class="section-title"><span class="dot"></span> Auditoría de Fórmulas</div>
-        <button class="copy-btn" data-copy="audit" title="Copiar todo">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
-        </button>
-      </div>
-      <p class="text-xs text-slate-500 mb-3">
-        Valores actuales sustituidos en cada fórmula. Listo para llevar a Excel.
-      </p>
-      <div id="auditList" class="space-y-2 text-xs"></div>
-    </article>
-
-  </div>
+    </div>
+  </details>
 
   <footer class="mt-8 text-center text-xs text-slate-400">
-    Herramienta de cálculo local · los valores no se envían a ningún servidor.
+    Cálculo 100% local en tu dispositivo · Sin conexión a servidores externos.
   </footer>
 </div>
 
@@ -472,7 +512,7 @@
     bcv: 920,
     par: 1150,
     usd: 100,
-    price: 0,
+    price: 1000,
     costUsd: 8.5,
     marginPct: 5,
     bufferPct: 3,
@@ -528,12 +568,21 @@
     }
   }
 
+  // Pestañas intuitivas
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+      document.querySelectorAll('.tab-panel').forEach(panel => {
+        panel.classList.toggle('hidden', panel.id !== `panel-${target}`);
+      });
+    });
+  });
+
   function validate() {
     const errors = [];
-    if (!Number.isFinite(state.bcv) || state.bcv <= 0) errors.push('Tasa BCV debe ser mayor que 0.');
-    if (!Number.isFinite(state.par) || state.par <= 0) errors.push('Tasa Paralela debe ser mayor que 0.');
-    if (!Number.isFinite(state.usd) || state.usd < 0) errors.push('Monto USD no válido.');
-    if (!Number.isFinite(state.price) || state.price < 0) errors.push('Precio de reposición no válido.');
+    if (!Number.isFinite(state.bcv) || state.bcv <= 0) errors.push('Escribe una tasa BCV mayor que 0.');
+    if (!Number.isFinite(state.par) || state.par <= 0) errors.push('Escribe una tasa Paralela mayor que 0.');
 
     if (errors.length) {
       warnBox.textContent = '⚠️ ' + errors.join(' ');
@@ -568,16 +617,18 @@
     const impParRate = (Number.isFinite(impBcvTotalBs) && Number.isFinite(pCash)) ? impBcvTotalBs / pCash : NaN;
     const impUsdNeededAtRealPar = (Number.isFinite(impBcvTotalBs) && par > 0) ? impBcvTotalBs / par : NaN;
 
-    const bsBCV = usd * bcv;
-    const bsPAR = usd * par;
+    const u = Number.isFinite(usd) && usd >= 0 ? usd : 0;
+    const bsBCV = u * bcv;
+    const bsPAR = u * par;
     const bsDiff = bsPAR - bsBCV;
 
     const arbPct = (par !== 0) ? ((par - bcv) / par) * 100 : NaN;
     const arbUsd = (par !== 0) ? bsBCV / par : NaN;
-    const arbNet = usd - arbUsd;
+    const arbNet = u - arbUsd;
 
+    const pr = Number.isFinite(price) && price >= 0 ? price : 0;
     const adjFactor = (bcv !== 0) ? par / bcv : NaN;
-    const adjPrice = price * adjFactor;
+    const adjPrice = pr * adjFactor;
 
     const avg = (bcv + par) / 2;
     const devBCV = (avg !== 0) ? ((bcv - avg) / avg) * 100 : NaN;
@@ -588,9 +639,9 @@
       gapAbs, gapPct,
       cUsd, fxOutBs, fxEqUsd, fxSugUsd, fxInBs, fxProfitBs, fxProfitUsd,
       pCash, pBcv, impGapPct, impSavePct, impBcvTotalBs, impParRate, impUsdNeededAtRealPar,
-      bsBCV, bsPAR, bsDiff,
+      u, bsBCV, bsPAR, bsDiff,
       arbPct, arbUsd, arbNet,
-      adjFactor, adjPrice,
+      pr, adjFactor, adjPrice,
       avg, devBCV, devPAR, symPct
     };
   }
@@ -598,7 +649,7 @@
   function render() {
     const ok = validate();
     if (!ok) {
-      ['gapPct','gapAbs','fxEqUsd','fxSugUsd','fxProfitUsd','impGapPct','impSavePct','impParRate',
+      ['gapPct','gapAbs','arbPctTop','fxEqUsd','fxSugUsd','fxProfitUsd','impGapPct','impSavePct','impParRate',
        'bsBCV','bsPAR','bsDiff','arbPct','arbUsd','arbNet','adjFactor','adjPrice','avgRate','devBCV','devPAR','symPct']
         .forEach(id => $(id).textContent = '—');
       ['fGap','fFxPrice','fImp','fImpact','fArb','fAdj','fAvg'].forEach(id => $(id).textContent = '');
@@ -608,32 +659,14 @@
 
     const r = compute();
 
+    // Resumen superior
     const gapEl = $('gapPct');
     gapEl.textContent = fmtPct(r.gapPct, 2);
-    gapEl.className = `metric-value text-3xl md:text-4xl ${signClass(r.gapPct)}`;
-    $('gapPctLabel').textContent =
-      r.gapPct > 0 ? 'El paralelo supera al BCV' :
-      r.gapPct < 0 ? 'El BCV supera al paralelo' : 'Sin brecha';
+    gapEl.className = `metric-value text-xl md:text-2xl mt-0.5 ${signClass(r.gapPct)}`;
+    $('gapAbs').textContent = `${fmt(r.gapAbs)} Bs`;
+    $('arbPctTop').textContent = Number.isFinite(r.arbPct) ? `${fmt(r.arbPct, 2)}%` : '—';
 
-    const gapAbsEl = $('gapAbs');
-    gapAbsEl.textContent = `${fmt(r.gapAbs)} Bs`;
-    gapAbsEl.className = `metric-value text-2xl md:text-3xl ${signClass(r.gapAbs)}`;
-
-    $('fGap').innerHTML =
-      `Brecha % = ((${fmt(state.par)} − ${fmt(state.bcv)}) / ${fmt(state.bcv)}) × 100 = <b>${fmtPct(r.gapPct,2)}</b><br>` +
-      `Brecha Abs = ${fmt(state.par)} − ${fmt(state.bcv)} = <b>${fmt(r.gapAbs)} Bs/$</b>`;
-
-    $('fxEqUsd').textContent = `$${fmt(r.fxEqUsd)}`;
-    $('fxOutBs').textContent = `Salida: ${fmt(r.fxOutBs, 2)} Bs`;
-    $('fxSugUsd').textContent = `$${fmt(r.fxSugUsd)}`;
-    $('fxInBs').textContent = `Ingreso: ${fmt(r.fxInBs, 2)} Bs`;
-    $('fxProfitUsd').textContent = `${r.fxProfitUsd >= 0 ? '+' : '-'}$${fmt(Math.abs(r.fxProfitUsd))}`;
-    $('fxProfitBs').textContent = `${r.fxProfitBs >= 0 ? '+' : ''}${fmt(r.fxProfitBs, 2)} Bs`;
-
-    $('fFxPrice').innerHTML =
-      `Equilibrio USD = (${fmt(r.cUsd,2)} × ${fmt(state.bcv)}) / ${fmt(state.par)} = <b>$${fmt(r.fxEqUsd)}</b><br>` +
-      `Sugerido USD = $${fmt(r.fxEqUsd)} × (1 + ${fmt(state.marginPct,1)}%) × (1 + ${fmt(state.bufferPct,1)}%) = <b>$${fmt(r.fxSugUsd)}</b>`;
-
+    // Pestaña 1: Voy a Pagar
     $('impGapPct').textContent = fmtPct(r.impGapPct, 2);
     $('impSavePct').textContent = Number.isFinite(r.impSavePct) ? `${fmt(r.impSavePct, 2)}%` : '—';
     $('impParRate').textContent = Number.isFinite(r.impParRate) ? `${fmt(r.impParRate)} Bs` : '—';
@@ -642,75 +675,64 @@
     if (Number.isFinite(r.impParRate)) {
       if (r.impParRate < state.par) {
         const ahorroExtra = r.pCash - r.impUsdNeededAtRealPar;
-        verdictEl.className = 'rounded-xl p-3 mb-3 border text-xs font-semibold bg-blue-50 border-blue-200 text-blue-900';
-        verdictEl.innerHTML = `✅ Conviene pagar en Bs. a BCV (${fmt(r.impBcvTotalBs, 2)} Bs): cambiando tus divisas a ${fmt(state.par)} necesitas <b>$${fmt(r.impUsdNeededAtRealPar, 2)}</b> y ahorras <b>$${fmt(ahorroExtra, 2)}</b> extra frente a pagar $${fmt(r.pCash, 2)} en efectivo.`;
+        verdictEl.className = 'rounded-2xl p-4 border text-sm font-semibold leading-relaxed bg-blue-50 border-blue-200 text-blue-950';
+        verdictEl.innerHTML = `✅ <b>Te conviene pagar en Bolívares (${fmt(r.impBcvTotalBs, 2)} Bs):</b><br><span class="font-normal text-xs text-blue-900">Si cambias tus dólares en la calle a <b>${fmt(state.par)} Bs/$</b>, solo gastas <b>$${fmt(r.impUsdNeededAtRealPar, 2)}</b> para cubrir la factura y te ahorras <b>$${fmt(ahorroExtra, 2)}</b> extra frente a dar los $${fmt(r.pCash, 2)} en efectivo.</span>`;
       } else if (r.impParRate > state.par) {
         const sobrecosto = r.impUsdNeededAtRealPar - r.pCash;
-        verdictEl.className = 'rounded-xl p-3 mb-3 border text-xs font-semibold bg-emerald-50 border-emerald-200 text-emerald-900';
-        verdictEl.innerHTML = `💵 Conviene pagar en Divisa Física ($${fmt(r.pCash, 2)}): la tasa implícita del comercio (${fmt(r.impParRate)} Bs/$) es más cara que el paralelo real (${fmt(state.par)} Bs/$) por <b>$${fmt(sobrecosto, 2)}</b>.`;
+        verdictEl.className = 'rounded-2xl p-4 border text-sm font-semibold leading-relaxed bg-emerald-50 border-emerald-200 text-emerald-950';
+        verdictEl.innerHTML = `💵 <b>Te conviene pagar con los $${fmt(r.pCash, 2)} en efectivo:</b><br><span class="font-normal text-xs text-emerald-900">El comercio está calculando una tasa muy alta (<b>${fmt(r.impParRate)} Bs/$</b> vs. <b>${fmt(state.par)} Bs/$</b> de la calle). Si pagas en efectivo te ahorras <b>$${fmt(sobrecosto, 2)}</b>.</span>`;
       } else {
-        verdictEl.className = 'rounded-xl p-3 mb-3 border text-xs font-semibold bg-slate-100 border-slate-200 text-slate-800';
-        verdictEl.textContent = '⚖️ Empate exacto: ambos métodos equivalen al mismo valor real.';
+        verdictEl.className = 'rounded-2xl p-4 border text-sm font-semibold bg-slate-100 border-slate-200 text-slate-800';
+        verdictEl.textContent = '⚖️ Da exactamente igual pagar en bolívares o en dólares.';
       }
     } else {
-      verdictEl.className = 'rounded-xl p-3 mb-3 border text-xs font-semibold bg-slate-50 border-slate-200 text-slate-500';
-      verdictEl.textContent = 'Ingresa ambos precios mayores a 0 para ver la recomendación.';
+      verdictEl.className = 'rounded-2xl p-4 border text-xs font-semibold bg-slate-50 border-slate-200 text-slate-500';
+      verdictEl.textContent = 'Escribe ambos precios arriba para decirte qué forma de pago te conviene más.';
     }
 
-    $('fImp').innerHTML =
-      `Brecha implícita = ((${fmt(r.pBcv,2)} − ${fmt(r.pCash,2)}) / ${fmt(r.pCash,2)}) × 100 = <b>${fmtPct(r.impGapPct,2)}</b><br>` +
-      `Tasa implícita = (${fmt(r.pBcv,2)} × ${fmt(state.bcv)}) / ${fmt(r.pCash,2)} = <b>${fmt(r.impParRate)} Bs/$</b>`;
+    // Pestaña 2: Voy a Vender
+    $('fxEqUsd').textContent = `$${fmt(r.fxEqUsd)}`;
+    $('fxOutBs').textContent = `Pagas: ${fmt(r.fxOutBs, 2)} Bs`;
+    $('fxSugUsd').textContent = `$${fmt(r.fxSugUsd)}`;
+    $('fxInBs').textContent = `Recibes: ${fmt(r.fxInBs, 2)} Bs`;
+    $('fxProfitUsd').textContent = `${r.fxProfitUsd >= 0 ? '+' : '-'}$${fmt(Math.abs(r.fxProfitUsd))}`;
+    $('fxProfitBs').textContent = `${r.fxProfitBs >= 0 ? '+' : ''}${fmt(r.fxProfitBs, 2)} Bs`;
 
+    // Pestaña 3: Convertir Monto
     $('bsBCV').textContent = `${fmt(r.bsBCV)} Bs`;
     $('bsPAR').textContent = `${fmt(r.bsPAR)} Bs`;
     const bsDiffEl = $('bsDiff');
     bsDiffEl.textContent = `${fmt(r.bsDiff)} Bs`;
     bsDiffEl.className = `metric-value text-xl mt-1 ${signClass(r.bsDiff)}`;
 
-    $('fImpact').innerHTML =
-      `BCV: ${fmt(state.usd,2)} × ${fmt(state.bcv)} = <b>${fmt(r.bsBCV)} Bs</b><br>` +
-      `Par: ${fmt(state.usd,2)} × ${fmt(state.par)} = <b>${fmt(r.bsPAR)} Bs</b><br>` +
-      `Δ = ${fmt(r.bsPAR)} − ${fmt(r.bsBCV)} = <b>${fmt(r.bsDiff)} Bs</b>`;
+    $('arbPct').textContent = fmtPct(r.arbPct, 2);
+    $('arbUsd').textContent = `$${fmt(r.arbUsd)}`;
+    $('arbNet').textContent = `$${fmt(r.arbNet)}`;
 
-    const arbPctEl = $('arbPct');
-    arbPctEl.textContent = fmtPct(r.arbPct, 2);
-    $('arbUsd').textContent = `${fmt(r.arbUsd)} USD`;
-    const arbNetEl = $('arbNet');
-    arbNetEl.textContent = `${fmt(r.arbNet)} USD`;
-    arbNetEl.className = `metric-value text-2xl ${signClass(r.arbNet)}`;
-
-    $('fArb').innerHTML =
-      `Ahorro % = ((${fmt(state.par)} − ${fmt(state.bcv)}) / ${fmt(state.par)}) × 100 = <b>${fmtPct(r.arbPct,2)}</b><br>` +
-      `USD necesarios a Par para cubrir ${fmt(r.bsBCV)} Bs = ${fmt(r.bsBCV)} / ${fmt(state.par)} = <b>${fmt(r.arbUsd)} USD</b><br>` +
-      `Ahorro neto = ${fmt(state.usd,2)} − ${fmt(r.arbUsd)} = <b>${fmt(r.arbNet)} USD</b>`;
-
+    // Modo Avanzado
     $('adjFactor').textContent = `×${fmt(r.adjFactor, 4)}`;
     $('adjPrice').textContent = `${fmt(r.adjPrice)} Bs`;
-    $('fAdj').innerHTML =
-      `Factor = Par / BCV = ${fmt(state.par)} / ${fmt(state.bcv)} = <b>×${fmt(r.adjFactor,4)}</b><br>` +
-      `Precio reposición = ${fmt(state.price)} × ${fmt(r.adjFactor,4)} = <b>${fmt(r.adjPrice)} Bs</b>`;
-
     $('avgRate').textContent = `${fmt(r.avg)} Bs/$`;
     $('devBCV').textContent = fmtPct(r.devBCV, 2);
     $('devPAR').textContent = fmtPct(r.devPAR, 2);
     $('symPct').textContent = fmtPct(r.symPct, 2);
 
-    $('fAvg').innerHTML =
-      `Promedio = (${fmt(state.bcv)} + ${fmt(state.par)}) / 2 = <b>${fmt(r.avg)} Bs/$</b><br>` +
-      `Desv. BCV = <b>${fmtPct(r.devBCV,2)}</b> · Desv. Par = <b>${fmtPct(r.devPAR,2)}</b> · Dif. simétrica = <b>${fmtPct(r.symPct,2)}</b>`;
+    $('fGap').innerHTML = `<b>Brecha %:</b> ((${fmt(state.par)} − ${fmt(state.bcv)}) / ${fmt(state.bcv)}) × 100 = <b>${fmtPct(r.gapPct,2)}</b> (${fmt(r.gapAbs)} Bs/$)`;
+    $('fFxPrice').innerHTML = `<b>Venta USD:</b> Equilibrio = (${fmt(r.cUsd,2)} × ${fmt(state.bcv)}) / ${fmt(state.par)} = <b>$${fmt(r.fxEqUsd)}</b> → Sugerido = <b>$${fmt(r.fxSugUsd)}</b>`;
+    $('fImp').innerHTML = `<b>Dos Precios:</b> Brecha implícita = <b>${fmtPct(r.impGapPct,2)}</b> · Tasa implícita = <b>${fmt(r.impParRate)} Bs/$</b>`;
+    $('fImpact').innerHTML = `<b>Monto $${fmt(r.u,2)}:</b> BCV = <b>${fmt(r.bsBCV)} Bs</b> · Paralela = <b>${fmt(r.bsPAR)} Bs</b> · Δ = <b>${fmt(r.bsDiff)} Bs</b>`;
+    $('fArb').innerHTML = `<b>Arbitraje:</b> Ahorro = <b>${fmtPct(r.arbPct,2)}</b> · Cambias <b>$${fmt(r.arbUsd)}</b> y te sobran <b>$${fmt(r.arbNet)}</b>`;
+    $('fAdj').innerHTML = `Factor = ${fmt(state.par)} / ${fmt(state.bcv)} = <b>×${fmt(r.adjFactor,4)}</b> · Reposición = <b>${fmt(r.adjPrice)} Bs</b>`;
+    $('fAvg').innerHTML = `Promedio = <b>${fmt(r.avg)} Bs/$</b> · Desv. BCV = <b>${fmtPct(r.devBCV,2)}</b> · Desv. Par = <b>${fmtPct(r.devPAR,2)}</b>`;
 
     const rows = [
-      ['Brecha %', `((${fmt(state.par)} − ${fmt(state.bcv)}) / ${fmt(state.bcv)}) × 100 = ${fmtPct(r.gapPct,2)}`],
-      ['Brecha Abs', `${fmt(state.par)} − ${fmt(state.bcv)} = ${fmt(r.gapAbs)} Bs/$`],
-      ['Equilibrio USD', `(${fmt(r.cUsd,2)} × ${fmt(state.bcv)}) / ${fmt(state.par)} = $${fmt(r.fxEqUsd)}`],
-      ['Sugerido USD', `$${fmt(r.fxEqUsd)} × (1+${fmt(state.marginPct,1)}%) × (1+${fmt(state.bufferPct,1)}%) = $${fmt(r.fxSugUsd)}`],
-      ['Brecha Implícita', `((${fmt(r.pBcv,2)} − ${fmt(r.pCash,2)}) / ${fmt(r.pCash,2)}) × 100 = ${fmtPct(r.impGapPct,2)}`],
-      ['Tasa Implícita', `(${fmt(r.pBcv,2)} × ${fmt(state.bcv)}) / ${fmt(r.pCash,2)} = ${fmt(r.impParRate)} Bs/$`],
-      ['Bs a BCV', `${fmt(state.usd,2)} × ${fmt(state.bcv)} = ${fmt(r.bsBCV)} Bs`],
-      ['Bs a Par', `${fmt(state.usd,2)} × ${fmt(state.par)} = ${fmt(r.bsPAR)} Bs`],
-      ['Ahorro %', `((${fmt(state.par)} − ${fmt(state.bcv)}) / ${fmt(state.par)}) × 100 = ${fmtPct(r.arbPct,2)}`],
-      ['Factor ajuste', `${fmt(state.par)} / ${fmt(state.bcv)} = ×${fmt(r.adjFactor,4)}`],
-      ['Promedio', `(${fmt(state.bcv)} + ${fmt(state.par)}) / 2 = ${fmt(r.avg)} Bs/$`],
+      ['Brecha %', `${fmtPct(r.gapPct,2)} (${fmt(r.gapAbs)} Bs/$)`],
+      ['Equilibrio USD', `$${fmt(r.fxEqUsd)} (Costo: ${fmt(r.fxOutBs,2)} Bs)`],
+      ['Sugerido USD', `$${fmt(r.fxSugUsd)} (Ganancia: +$${fmt(r.fxProfitUsd)})`],
+      ['Brecha Implícita', `${fmtPct(r.impGapPct,2)} · Tasa implícita: ${fmt(r.impParRate)} Bs/$`],
+      ['Ahorro Bs.', `${fmtPct(r.arbPct,2)} ($${fmt(r.arbNet)} libres en $${fmt(r.u,2)})`],
+      ['Factor ajuste', `×${fmt(r.adjFactor,4)}`],
+      ['Promedio', `${fmt(r.avg)} Bs/$`],
     ];
     $('auditList').innerHTML = rows.map(([k,v]) =>
       `<div class="flex items-start gap-2"><span class="pill bg-slate-100 text-slate-700 shrink-0">${k}</span><span class="mono text-slate-600 break-all">${v}</span></div>`
@@ -753,13 +775,13 @@
     inPriceCash.value = '22';
     inPriceBcvRef.value = '27';
     syncInputs();
-    showToast('Valores de ejemplo cargados');
+    showToast('Ejemplo cargado');
   });
 
   $('btnClear').addEventListener('click', () => {
-    inBCV.value = ''; inPAR.value = ''; inUSD.value = ''; inPrice.value = '0';
+    inBCV.value = ''; inPAR.value = '';
     syncInputs();
-    showToast('Campos limpiados');
+    showToast('Tasas limpiadas');
   });
 
   document.querySelectorAll('.dec-btn').forEach(btn => {
@@ -778,30 +800,27 @@
   document.querySelectorAll('.copy-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const key = btn.dataset.copy;
-      if (!validate()) { showToast('Completa las tasas primero'); return; }
+      if (!validate()) { showToast('Escribe las tasas primero'); return; }
       const r = compute();
       let text = '';
       switch (key) {
         case 'gap':
-          text = `Brecha Cambiaria: ${fmtPct(r.gapPct,2)} | Brecha Abs: ${fmt(r.gapAbs)} Bs/$`;
+          text = `BCV: ${fmt(state.bcv)} | Paralela: ${fmt(state.par)} | Brecha: ${fmtPct(r.gapPct,2)} (${fmt(r.gapAbs)} Bs/$)`;
           break;
         case 'fxprice':
-          text = `Costo BCV: $${fmt(r.cUsd,2)} (${fmt(r.fxOutBs,2)} Bs) | Equilibrio USD: $${fmt(r.fxEqUsd)} | Sugerido USD: $${fmt(r.fxSugUsd)}`;
+          text = `Costo BCV: $${fmt(r.cUsd,2)} | Mínimo USD: $${fmt(r.fxEqUsd)} | Sugerido USD: $${fmt(r.fxSugUsd)}`;
           break;
         case 'imp':
-          text = `Brecha Implícita ($${fmt(r.pCash,2)} vs $${fmt(r.pBcv,2)} BCV): ${fmtPct(r.impGapPct,2)} | Tasa Implícita: ${fmt(r.impParRate)} Bs/$`;
+          text = `Comparativa ($${fmt(r.pCash,2)} efectivo vs $${fmt(r.pBcv,2)} BCV): Brecha ${fmtPct(r.impGapPct,2)} | Tasa implícita ${fmt(r.impParRate)} Bs/$`;
           break;
         case 'impact':
-          text = `Impacto USD ${fmt(state.usd,2)}: BCV=${fmt(r.bsBCV)} Bs | Par=${fmt(r.bsPAR)} Bs | Δ=${fmt(r.bsDiff)} Bs`;
-          break;
-        case 'arb':
-          text = `Arbitraje: Ahorro=${fmtPct(r.arbPct,2)} | USD a Par=${fmt(r.arbUsd)} | Ahorro neto=${fmt(r.arbNet)} USD`;
+          text = `$${fmt(r.u,2)}: BCV=${fmt(r.bsBCV)} Bs | Paralela=${fmt(r.bsPAR)} Bs | Ahorro=${fmt(r.arbPct,2)}% ($${fmt(r.arbNet)})`;
           break;
         case 'adj':
-          text = `Factor ajuste=×${fmt(r.adjFactor,4)} | Precio reposición=${fmt(r.adjPrice)} Bs`;
+          text = `Factor ajuste=×${fmt(r.adjFactor,4)} | Reposición=${fmt(r.adjPrice)} Bs`;
           break;
         case 'avg':
-          text = `Promedio=${fmt(r.avg)} Bs/$ | Desv.BCV=${fmtPct(r.devBCV,2)} | Desv.Par=${fmtPct(r.devPAR,2)} | Dif.sim=${fmtPct(r.symPct,2)}`;
+          text = `Promedio=${fmt(r.avg)} Bs/$ | Desv.BCV=${fmtPct(r.devBCV,2)} | Desv.Par=${fmtPct(r.devPAR,2)}`;
           break;
         case 'audit':
           text = Array.from($('auditList').children).map(li => li.innerText).join('\n');

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'brecha-cambiaria-v2';
+const CACHE_NAME = 'brecha-cambiaria-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

@@ -2,7 +2,7 @@
   "id": "./",
   "name": "Brecha Cambiaria · BCV vs Paralela",
   "short_name": "Brecha",
-  "description": "Calcula la brecha cambiaria BCV vs Paralela, precio óptimo en divisa física y brecha implícita.",
+  "description": "Calcula la brecha cambiaria BCV vs Paralela, qué moneda conviene pagar y a cuánto vender.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
