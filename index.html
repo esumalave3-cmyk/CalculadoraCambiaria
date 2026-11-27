@@ -89,6 +89,22 @@
     background: #f1f5f9;
     color: #0f172a;
   }
+  .mode-chip {
+    padding: .5rem .8rem;
+    border-radius: .75rem;
+    font-size: .78rem;
+    font-weight: 700;
+    border: 1.5px solid #e2e8f0;
+    background: #f8fafc;
+    color: #475569;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .mode-chip.active {
+    background: #eef2ff;
+    border-color: #4f46e5;
+    color: #3730a3;
+  }
   .copy-btn {
     background: #f8fafc; color: #475569;
     border: 1px solid #e2e8f0;
@@ -141,7 +157,6 @@
   .section-title .dot {
     width: 7px; height: 7px; border-radius: 9999px; background: currentColor;
   }
-  .divider { height: 1px; background: #e2e8f0; }
   .chip-bcv { background: #dbeafe; color: #1e40af; }
   .chip-par { background: #ffedd5; color: #9a3412; }
   details > summary { list-style: none; cursor: pointer; }
@@ -219,7 +234,6 @@
       </div>
     </div>
 
-    <!-- RESUMEN INSTANTÁNEO DE LA BRECHA -->
     <div class="mt-4 pt-4 border-t border-slate-100 grid grid-cols-3 gap-2.5 text-center">
       <div class="bg-emerald-50/70 border border-emerald-100 rounded-xl p-2.5">
         <div class="text-[11px] font-semibold text-slate-500">Brecha actual</div>
@@ -254,7 +268,7 @@
     </div>
   </div>
 
-  <!-- VISTA 1: VOY A PAGAR (¿CONVIENE BS O EFECTIVO?) -->
+  <!-- VISTA 1: VOY A PAGAR -->
   <section id="panel-pagar" class="tab-panel space-y-4">
     <article class="card p-5 md:p-6">
       <div class="flex items-start justify-between gap-2 mb-2">
@@ -280,7 +294,6 @@
         </div>
       </div>
 
-      <!-- VEREDICTO CLARO EN LENGUAJE COTIDIANO -->
       <div id="impVerdict" class="rounded-2xl p-4 border text-sm font-semibold leading-relaxed">
         Calculando recomendación...
       </div>
@@ -305,24 +318,34 @@
     </article>
   </section>
 
-  <!-- VISTA 2: VOY A VENDER (PRECIO EN DIVISA FÍSICA PARA NO PERDER) -->
+  <!-- VISTA 2: VOY A VENDER (CON INTERRUPTOR DE ESCENARIO INTEGRADO) -->
   <section id="panel-vender" class="tab-panel hidden space-y-4">
     <article class="card p-5 md:p-6">
-      <div class="flex items-start justify-between gap-2 mb-2">
+      <div class="flex items-start justify-between gap-2 mb-3">
         <div>
-          <h2 class="text-base md:text-lg font-extrabold text-slate-900">¿A cuánto vender en Dólares físicos?</h2>
-          <p class="text-xs text-slate-500 mt-0.5">
-            Si compras tu mercancía pagando en Bs. a <b>BCV</b> y tus clientes te pagan con <b>dólares en efectivo</b>.
+          <h2 class="text-base md:text-lg font-extrabold text-slate-900">¿A cuánto vender para no perder?</h2>
+          <p id="sellModeDesc" class="text-xs text-slate-500 mt-0.5">
+            Pagas tu costo en Bs. a <b>BCV</b> y vendes recibiendo <b>dólares en efectivo</b>.
           </p>
         </div>
         <button class="copy-btn shrink-0" data-copy="fxprice">Copiar</button>
       </div>
 
+      <!-- INTERRUPTOR ENTRE LOS DOS ESCENARIOS DE VENTA -->
+      <div class="flex flex-wrap gap-2 mb-4">
+        <button type="button" class="mode-chip active" data-sellmode="bcv_to_usd">
+          💵 Compro a BCV → Vendo en USD físico
+        </button>
+        <button type="button" class="mode-chip" data-sellmode="par_to_bcv">
+          🏦 Compro a Paralela → Cobro en Bs. a BCV
+        </button>
+      </div>
+
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 my-4">
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Tu costo a BCV ($)</label>
+          <label id="lblCostInput" class="block text-xs font-bold text-slate-700 mb-1">Tu costo a BCV ($)</label>
           <input id="inCostUsd" type="text" inputmode="decimal" value="8.50" class="input-base" />
-          <span class="block text-[11px] text-slate-400 mt-1">Lo que pagas a BCV</span>
+          <span id="subCostInput" class="block text-[11px] text-slate-400 mt-1">Lo que pagas a BCV</span>
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">Ganancia deseada (%)</label>
@@ -336,14 +359,15 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <!-- RESULTADOS MODO 1: COMPRO A BCV -> VENDO EN USD FÍSICO -->
+      <div id="sellResultBcvToUsd" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5">
           <div class="text-xs font-bold text-slate-600">1. Mínimo para no perder</div>
           <div id="fxEqUsd" class="metric-value text-2xl text-slate-900 mt-1">—</div>
           <div id="fxOutBs" class="text-[11px] text-slate-500 mt-1">Costo: — Bs</div>
         </div>
         <div class="bg-emerald-50 border-2 border-emerald-400 rounded-xl p-3.5">
-          <div class="text-xs font-bold text-emerald-800">2. Precio de venta sugerido</div>
+          <div class="text-xs font-bold text-emerald-800">2. Precio sugerido en USD</div>
           <div id="fxSugUsd" class="metric-value text-2xl md:text-3xl text-emerald-700 mt-1">—</div>
           <div id="fxInBs" class="text-[11px] text-emerald-700 mt-1">Al cambiar: — Bs</div>
         </div>
@@ -353,10 +377,34 @@
           <div id="fxProfitBs" class="text-[11px] text-indigo-700 mt-1">— Bs</div>
         </div>
       </div>
+
+      <!-- RESULTADOS MODO 2: COMPRO A PARALELA -> COBRO EN BS A BCV -->
+      <div id="sellResultParToBcv" class="hidden space-y-3">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5">
+            <div class="text-xs font-bold text-slate-600">1. Reposición real (Bs.)</div>
+            <div id="p2bEqBs" class="metric-value text-xl md:text-2xl text-slate-900 mt-1">—</div>
+            <div id="p2bEqBcvRef" class="text-[11px] text-slate-500 mt-1">Piso a BCV: —</div>
+          </div>
+          <div class="bg-blue-50 border-2 border-blue-400 rounded-xl p-3.5">
+            <div class="text-xs font-bold text-blue-900">2. Cobrar en Bs. (Sugerido)</div>
+            <div id="p2bSugBs" class="metric-value text-xl md:text-2xl text-blue-700 mt-1">—</div>
+            <div id="p2bSugBcvRef" class="text-[11px] text-blue-800 mt-1">Marcar como: — a BCV</div>
+          </div>
+          <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-3.5">
+            <div class="text-xs font-bold text-indigo-800">3. Ganancia real en Bs.</div>
+            <div id="p2bProfitBs" class="metric-value text-xl md:text-2xl text-indigo-900 mt-1">—</div>
+            <div id="p2bProfitParUsd" class="text-[11px] text-indigo-700 mt-1">Equiv. a Par: —</div>
+          </div>
+        </div>
+        <div id="p2bNote" class="rounded-xl p-3 bg-amber-50 border border-amber-200 text-xs text-amber-900 font-medium">
+          Al cobrar en Bs. a tasa BCV, recuerda que el cliente paga <b>Precio Ref. BCV × Tasa BCV</b>: al cobrar <b id="p2bCollectedBs">—</b> en Bs. cubres tu reposición y margen.
+        </div>
+      </div>
     </article>
   </section>
 
-  <!-- VISTA 3: CONVERTIR MONTO (BCV VS PARALELA) -->
+  <!-- VISTA 3: CONVERTIR MONTO -->
   <section id="panel-convertir" class="tab-panel hidden space-y-4">
     <article class="card p-5 md:p-6">
       <div class="flex items-start justify-between gap-2 mb-3">
@@ -401,7 +449,7 @@
     </article>
   </section>
 
-  <!-- SECCIÓN AVANZADA / TÉCNICA (PLEGABLE PARA NO CONFUNDIR, PERO SIEMPRE DISPONIBLE) -->
+  <!-- MODO AVANZADO PLEGABLE -->
   <details id="advancedSection" class="mt-6 group">
     <summary class="card p-4 flex items-center justify-between hover:bg-slate-50/80 transition">
       <div class="flex items-center gap-2.5">
@@ -415,8 +463,6 @@
     </summary>
 
     <div class="mt-4 space-y-4">
-
-      <!-- CONTROL DE DECIMALES -->
       <div class="card p-4 flex flex-wrap items-center justify-between gap-3">
         <span class="text-xs font-bold text-slate-700">Cantidad de decimales en resultados:</span>
         <div class="inline-flex rounded-lg border border-slate-200 bg-slate-50 overflow-hidden">
@@ -427,8 +473,6 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-        <!-- FACTOR DE AJUSTE / REPOSICIÓN EN BS -->
         <article class="card p-5">
           <div class="flex items-center justify-between mb-3">
             <div class="section-title"><span class="dot"></span> Factor de Ajuste / Reposición</div>
@@ -451,7 +495,6 @@
           <div class="formula-row mt-3" id="fAdj"></div>
         </article>
 
-        <!-- PROMEDIO Y SIMETRÍA -->
         <article class="card p-5">
           <div class="flex items-center justify-between mb-3">
             <div class="section-title"><span class="dot"></span> Tasa Promedio y Desviación</div>
@@ -477,10 +520,8 @@
           </div>
           <div class="formula-row mt-3" id="fAvg"></div>
         </article>
-
       </div>
 
-      <!-- FÓRMULAS DETALLADAS Y AUDITORÍA -->
       <article class="card p-5">
         <div class="flex items-center justify-between mb-3">
           <div class="section-title"><span class="dot"></span> Auditoría Completa de Fórmulas</div>
@@ -495,7 +536,6 @@
         </div>
         <div id="auditList" class="space-y-2 text-xs"></div>
       </article>
-
     </div>
   </details>
 
@@ -518,6 +558,7 @@
     bufferPct: 3,
     priceCash: 22,
     priceBcvRef: 27,
+    sellMode: 'bcv_to_usd',
     dec: 2
   };
 
@@ -568,7 +609,7 @@
     }
   }
 
-  // Pestañas intuitivas
+  // Pestañas principales
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const target = btn.dataset.tab;
@@ -576,6 +617,42 @@
       document.querySelectorAll('.tab-panel').forEach(panel => {
         panel.classList.toggle('hidden', panel.id !== `panel-${target}`);
       });
+    });
+  });
+
+  // Interruptor de modo dentro de "Voy a Vender"
+  function applySellModeUI() {
+    const isParToBcv = state.sellMode === 'par_to_bcv';
+    document.querySelectorAll('.mode-chip').forEach(chip => {
+      chip.classList.toggle('active', chip.dataset.sellmode === state.sellMode);
+    });
+    $('sellResultBcvToUsd').classList.toggle('hidden', isParToBcv);
+    $('sellResultParToBcv').classList.toggle('hidden', !isParToBcv);
+
+    if (isParToBcv) {
+      $('sellModeDesc').innerHTML = 'Tu costo se calcula a tasa <b>Paralela</b> pero cobras a tus clientes en Bs. a tasa <b>BCV</b>.';
+      $('lblCostInput').textContent = 'Tu costo a Paralela ($)';
+      $('subCostInput').textContent = 'Costo real de reposición en $';
+      if (inCostUsd.value === '8.50') {
+        inCostUsd.value = '10.00';
+        state.costUsd = 10;
+      }
+    } else {
+      $('sellModeDesc').innerHTML = 'Pagas tu costo en Bs. a <b>BCV</b> y vendes recibiendo <b>dólares en efectivo</b>.';
+      $('lblCostInput').textContent = 'Tu costo a BCV ($)';
+      $('subCostInput').textContent = 'Lo que pagas a BCV';
+      if (inCostUsd.value === '10.00') {
+        inCostUsd.value = '8.50';
+        state.costUsd = 8.5;
+      }
+    }
+    render();
+  }
+
+  document.querySelectorAll('.mode-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      state.sellMode = chip.dataset.sellmode;
+      applySellModeUI();
     });
   });
 
@@ -602,13 +679,26 @@
     const cUsd = Number.isFinite(costUsd) && costUsd >= 0 ? costUsd : 0;
     const mFrac = (Number.isFinite(marginPct) ? marginPct : 0) / 100;
     const bFrac = (Number.isFinite(bufferPct) ? bufferPct : 0) / 100;
+    const multExtra = (1 + mFrac) * (1 + bFrac);
+
+    // Escenario A: Compro a BCV -> Vendo en USD físico
     const fxOutBs = cUsd * bcv;
     const fxEqUsd = (par !== 0) ? fxOutBs / par : NaN;
-    const fxSugUsd = fxEqUsd * (1 + mFrac) * (1 + bFrac);
+    const fxSugUsd = fxEqUsd * multExtra;
     const fxInBs = fxSugUsd * par;
     const fxProfitBs = fxInBs - fxOutBs;
     const fxProfitUsd = (par !== 0) ? fxProfitBs / par : NaN;
 
+    // Escenario B: Compro a Paralela -> Cobro en Bs a BCV
+    const p2bEqBs = cUsd * par;
+    const p2bEqBcvRef = (bcv !== 0) ? p2bEqBs / bcv : NaN;
+    const p2bSugBs = p2bEqBs * multExtra;
+    const p2bSugBcvRef = (bcv !== 0) ? p2bSugBs / bcv : NaN;
+    const p2bCollectedBs = Number.isFinite(p2bSugBcvRef) ? p2bSugBcvRef * bcv : NaN;
+    const p2bProfitBs = p2bCollectedBs - p2bEqBs;
+    const p2bProfitParUsd = (par !== 0) ? p2bProfitBs / par : NaN;
+
+    // Dos precios
     const pCash = Number.isFinite(priceCash) && priceCash > 0 ? priceCash : NaN;
     const pBcv = Number.isFinite(priceBcvRef) && priceBcvRef > 0 ? priceBcvRef : NaN;
     const impGapPct = (Number.isFinite(pCash) && Number.isFinite(pBcv)) ? ((pBcv - pCash) / pCash) * 100 : NaN;
@@ -617,6 +707,7 @@
     const impParRate = (Number.isFinite(impBcvTotalBs) && Number.isFinite(pCash)) ? impBcvTotalBs / pCash : NaN;
     const impUsdNeededAtRealPar = (Number.isFinite(impBcvTotalBs) && par > 0) ? impBcvTotalBs / par : NaN;
 
+    // Convertir monto
     const u = Number.isFinite(usd) && usd >= 0 ? usd : 0;
     const bsBCV = u * bcv;
     const bsPAR = u * par;
@@ -626,6 +717,7 @@
     const arbUsd = (par !== 0) ? bsBCV / par : NaN;
     const arbNet = u - arbUsd;
 
+    // Reposición en Bs y promedio
     const pr = Number.isFinite(price) && price >= 0 ? price : 0;
     const adjFactor = (bcv !== 0) ? par / bcv : NaN;
     const adjPrice = pr * adjFactor;
@@ -638,6 +730,7 @@
     return {
       gapAbs, gapPct,
       cUsd, fxOutBs, fxEqUsd, fxSugUsd, fxInBs, fxProfitBs, fxProfitUsd,
+      p2bEqBs, p2bEqBcvRef, p2bSugBs, p2bSugBcvRef, p2bCollectedBs, p2bProfitBs, p2bProfitParUsd,
       pCash, pBcv, impGapPct, impSavePct, impBcvTotalBs, impParRate, impUsdNeededAtRealPar,
       u, bsBCV, bsPAR, bsDiff,
       arbPct, arbUsd, arbNet,
@@ -649,7 +742,8 @@
   function render() {
     const ok = validate();
     if (!ok) {
-      ['gapPct','gapAbs','arbPctTop','fxEqUsd','fxSugUsd','fxProfitUsd','impGapPct','impSavePct','impParRate',
+      ['gapPct','gapAbs','arbPctTop','fxEqUsd','fxSugUsd','fxProfitUsd',
+       'p2bEqBs','p2bSugBs','p2bProfitBs','impGapPct','impSavePct','impParRate',
        'bsBCV','bsPAR','bsDiff','arbPct','arbUsd','arbNet','adjFactor','adjPrice','avgRate','devBCV','devPAR','symPct']
         .forEach(id => $(id).textContent = '—');
       ['fGap','fFxPrice','fImp','fImpact','fArb','fAdj','fAvg'].forEach(id => $(id).textContent = '');
@@ -659,14 +753,13 @@
 
     const r = compute();
 
-    // Resumen superior
     const gapEl = $('gapPct');
     gapEl.textContent = fmtPct(r.gapPct, 2);
     gapEl.className = `metric-value text-xl md:text-2xl mt-0.5 ${signClass(r.gapPct)}`;
     $('gapAbs').textContent = `${fmt(r.gapAbs)} Bs`;
     $('arbPctTop').textContent = Number.isFinite(r.arbPct) ? `${fmt(r.arbPct, 2)}%` : '—';
 
-    // Pestaña 1: Voy a Pagar
+    // Dos precios
     $('impGapPct').textContent = fmtPct(r.impGapPct, 2);
     $('impSavePct').textContent = Number.isFinite(r.impSavePct) ? `${fmt(r.impSavePct, 2)}%` : '—';
     $('impParRate').textContent = Number.isFinite(r.impParRate) ? `${fmt(r.impParRate)} Bs` : '—';
@@ -690,7 +783,7 @@
       verdictEl.textContent = 'Escribe ambos precios arriba para decirte qué forma de pago te conviene más.';
     }
 
-    // Pestaña 2: Voy a Vender
+    // Venta Modo A: Compro a BCV -> Vendo en USD físico
     $('fxEqUsd').textContent = `$${fmt(r.fxEqUsd)}`;
     $('fxOutBs').textContent = `Pagas: ${fmt(r.fxOutBs, 2)} Bs`;
     $('fxSugUsd').textContent = `$${fmt(r.fxSugUsd)}`;
@@ -698,7 +791,16 @@
     $('fxProfitUsd').textContent = `${r.fxProfitUsd >= 0 ? '+' : '-'}$${fmt(Math.abs(r.fxProfitUsd))}`;
     $('fxProfitBs').textContent = `${r.fxProfitBs >= 0 ? '+' : ''}${fmt(r.fxProfitBs, 2)} Bs`;
 
-    // Pestaña 3: Convertir Monto
+    // Venta Modo B: Compro a Paralela -> Cobro en Bs a BCV
+    $('p2bEqBs').textContent = `${fmt(r.p2bEqBs, 2)} Bs`;
+    $('p2bEqBcvRef').textContent = `Piso a BCV: $${fmt(r.p2bEqBcvRef)}`;
+    $('p2bSugBs').textContent = `${fmt(r.p2bSugBs, 2)} Bs`;
+    $('p2bSugBcvRef').textContent = `Marcar como: $${fmt(r.p2bSugBcvRef)} a BCV`;
+    $('p2bProfitBs').textContent = `+${fmt(r.p2bProfitBs, 2)} Bs`;
+    $('p2bProfitParUsd').textContent = `Equiv. a Par: +$${fmt(r.p2bProfitParUsd)}`;
+    $('p2bCollectedBs').textContent = `${fmt(r.p2bCollectedBs, 2)} Bs`;
+
+    // Convertir monto
     $('bsBCV').textContent = `${fmt(r.bsBCV)} Bs`;
     $('bsPAR').textContent = `${fmt(r.bsPAR)} Bs`;
     const bsDiffEl = $('bsDiff');
@@ -709,7 +811,7 @@
     $('arbUsd').textContent = `$${fmt(r.arbUsd)}`;
     $('arbNet').textContent = `$${fmt(r.arbNet)}`;
 
-    // Modo Avanzado
+    // Avanzado
     $('adjFactor').textContent = `×${fmt(r.adjFactor, 4)}`;
     $('adjPrice').textContent = `${fmt(r.adjPrice)} Bs`;
     $('avgRate').textContent = `${fmt(r.avg)} Bs/$`;
@@ -718,7 +820,9 @@
     $('symPct').textContent = fmtPct(r.symPct, 2);
 
     $('fGap').innerHTML = `<b>Brecha %:</b> ((${fmt(state.par)} − ${fmt(state.bcv)}) / ${fmt(state.bcv)}) × 100 = <b>${fmtPct(r.gapPct,2)}</b> (${fmt(r.gapAbs)} Bs/$)`;
-    $('fFxPrice').innerHTML = `<b>Venta USD:</b> Equilibrio = (${fmt(r.cUsd,2)} × ${fmt(state.bcv)}) / ${fmt(state.par)} = <b>$${fmt(r.fxEqUsd)}</b> → Sugerido = <b>$${fmt(r.fxSugUsd)}</b>`;
+    $('fFxPrice').innerHTML = state.sellMode === 'par_to_bcv'
+      ? `<b>Par → BCV:</b> Reposición = ${fmt(r.cUsd,2)} × ${fmt(state.par)} = <b>${fmt(r.p2bEqBs,2)} Bs</b> → Cobrar a BCV = <b>$${fmt(r.p2bSugBcvRef)}</b> (${fmt(r.p2bCollectedBs,2)} Bs)`
+      : `<b>BCV → USD:</b> Equilibrio = (${fmt(r.cUsd,2)} × ${fmt(state.bcv)}) / ${fmt(state.par)} = <b>$${fmt(r.fxEqUsd)}</b> → Sugerido = <b>$${fmt(r.fxSugUsd)}</b>`;
     $('fImp').innerHTML = `<b>Dos Precios:</b> Brecha implícita = <b>${fmtPct(r.impGapPct,2)}</b> · Tasa implícita = <b>${fmt(r.impParRate)} Bs/$</b>`;
     $('fImpact').innerHTML = `<b>Monto $${fmt(r.u,2)}:</b> BCV = <b>${fmt(r.bsBCV)} Bs</b> · Paralela = <b>${fmt(r.bsPAR)} Bs</b> · Δ = <b>${fmt(r.bsDiff)} Bs</b>`;
     $('fArb').innerHTML = `<b>Arbitraje:</b> Ahorro = <b>${fmtPct(r.arbPct,2)}</b> · Cambias <b>$${fmt(r.arbUsd)}</b> y te sobran <b>$${fmt(r.arbNet)}</b>`;
@@ -727,8 +831,8 @@
 
     const rows = [
       ['Brecha %', `${fmtPct(r.gapPct,2)} (${fmt(r.gapAbs)} Bs/$)`],
-      ['Equilibrio USD', `$${fmt(r.fxEqUsd)} (Costo: ${fmt(r.fxOutBs,2)} Bs)`],
-      ['Sugerido USD', `$${fmt(r.fxSugUsd)} (Ganancia: +$${fmt(r.fxProfitUsd)})`],
+      ['Venta (BCV→USD)', `Mínimo $${fmt(r.fxEqUsd)} · Sugerido $${fmt(r.fxSugUsd)}`],
+      ['Venta (Par→BCV)', `Reposición ${fmt(r.p2bEqBs,2)} Bs · Ref. BCV $${fmt(r.p2bSugBcvRef)} (${fmt(r.p2bCollectedBs,2)} Bs)`],
       ['Brecha Implícita', `${fmtPct(r.impGapPct,2)} · Tasa implícita: ${fmt(r.impParRate)} Bs/$`],
       ['Ahorro Bs.', `${fmtPct(r.arbPct,2)} ($${fmt(r.arbNet)} libres en $${fmt(r.u,2)})`],
       ['Factor ajuste', `×${fmt(r.adjFactor,4)}`],
@@ -769,7 +873,7 @@
     inPAR.value = '1150.00';
     inUSD.value = '100';
     inPrice.value = '1000';
-    inCostUsd.value = '8.50';
+    inCostUsd.value = state.sellMode === 'par_to_bcv' ? '10.00' : '8.50';
     inMarginPct.value = '5';
     inBufferPct.value = '3';
     inPriceCash.value = '22';
@@ -808,7 +912,9 @@
           text = `BCV: ${fmt(state.bcv)} | Paralela: ${fmt(state.par)} | Brecha: ${fmtPct(r.gapPct,2)} (${fmt(r.gapAbs)} Bs/$)`;
           break;
         case 'fxprice':
-          text = `Costo BCV: $${fmt(r.cUsd,2)} | Mínimo USD: $${fmt(r.fxEqUsd)} | Sugerido USD: $${fmt(r.fxSugUsd)}`;
+          text = state.sellMode === 'par_to_bcv'
+            ? `Costo Par: $${fmt(r.cUsd,2)} (${fmt(r.p2bEqBs,2)} Bs) | Ref. BCV sugerida: $${fmt(r.p2bSugBcvRef)} (${fmt(r.p2bCollectedBs,2)} Bs)`
+            : `Costo BCV: $${fmt(r.cUsd,2)} | Mínimo USD: $${fmt(r.fxEqUsd)} | Sugerido USD: $${fmt(r.fxSugUsd)}`;
           break;
         case 'imp':
           text = `Comparativa ($${fmt(r.pCash,2)} efectivo vs $${fmt(r.pBcv,2)} BCV): Brecha ${fmtPct(r.impGapPct,2)} | Tasa implícita ${fmt(r.impParRate)} Bs/$`;
@@ -823,7 +929,8 @@
           text = `Promedio=${fmt(r.avg)} Bs/$ | Desv.BCV=${fmtPct(r.devBCV,2)} | Desv.Par=${fmtPct(r.devPAR,2)}`;
           break;
         case 'audit':
-          text = Array.from($('auditList').children).map(li => li.innerText).join('\n');
+          text = Array.from($('auditList').children).map(li => li.innerText).join('
+');
           break;
       }
       copyText(text);
